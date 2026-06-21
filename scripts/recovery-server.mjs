@@ -1155,7 +1155,7 @@ function html() {
       }).join('');
       const strategyBlock = '<div class="strategy-block">'
         + '<p class="kicker" style="color:var(--pink);margin-bottom:14px">стратегия родителя</p>'
-        + '<h2 style="font-family:\'Cormorant Garamond\',Georgia,serif;font-size:clamp(22px,2.4vw,30px);font-weight:400;margin:0 0 16px;line-height:1.2">Ваш паттерн под давлением</h2>'
+        + '<h2 class="serif" style="font-size:clamp(22px,2.4vw,30px);font-weight:400;margin:0 0 16px;line-height:1.2">Ваш паттерн под давлением</h2>'
         + '<p class="strategy-pattern">' + escapeHtml(pressurePattern(result.normalized)) + '</p>'
         + '<p class="strategy-pattern">' + escapeHtml(twistPattern(result.normalized)) + '</p>'
         + '<div class="strategy-cols">'
