@@ -981,6 +981,8 @@ function html() {
         state.index += 1;
         saveState();
         render();
+        const testEl = document.querySelector("#test");
+        if (testEl) setTimeout(() => testEl.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
         return;
       }
       const result = calculateResult(state.answers);
