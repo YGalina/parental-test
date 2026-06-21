@@ -163,6 +163,44 @@ const scaleHowTo = {
   }
 };
 
+const scaleLevelTexts = {
+  adultResponsibility: {
+    high: "Вы чётко держите взрослую рамку: не перекладываете на ребёнка решения, которые пока не его. Это создаёт предсказуемость.",
+    mid: "В большинстве ситуаций вы берёте ответственность на себя, но под давлением граница иногда сдвигается.",
+    low: "Стоит чаще называть вслух, что это ваше решение как взрослого — это снижает неопределённость для ребёнка."
+  },
+  emotionalContact: {
+    high: "Вы замечаете состояние ребёнка до того, как переходите к правилу или требованию — это сильная база для диалога.",
+    mid: "Вы стараетесь слышать ребёнка, хотя иногда решение или объяснение опережает признание его состояния.",
+    low: "Перед любым «нет» или «надо» стоит сделать паузу: произнести вслух, что, кажется, чувствует ребёнок прямо сейчас."
+  },
+  boundariesConsistency: {
+    high: "Договорённость остаётся различимой, даже когда ребёнок злится или давит — это создаёт надёжность.",
+    mid: "Границы в целом держатся, но под сильным давлением правило иногда размывается быстрее, чем нужно.",
+    low: "Если договорённость важна, полезно формулировать её конкретно: что неизменно, а где можно обсуждать формат."
+  },
+  autonomySupport: {
+    high: "Вы умеете оставлять ребёнку реальный выбор внутри взрослой рамки — не всё решение, но что-то значимое для него.",
+    mid: "Вы даёте ребёнку выбор, но иногда он либо слишком мал, либо слишком велик для его возраста и ситуации.",
+    low: "Попробуйте чаще предлагать выбор из двух вариантов, оба из которых вам подходят — это даёт ребёнку участие без перегруза."
+  },
+  conflictTolerance: {
+    high: "Вы выдерживаете недовольство ребёнка без автоматической капитуляции — это ценная родительская устойчивость.",
+    mid: "Вы стараетесь держать позицию, но сильная эмоция ребёнка иногда меняет решение быстрее, чем планировалось.",
+    low: "Когда ребёнок злится или плачет, решение может измениться слишком быстро. Стоит заранее подготовить спокойную формулу."
+  },
+  flexibility: {
+    high: "Вы готовы пересматривать первое решение, если появляются факты, которые действительно меняют картину.",
+    mid: "Вы меняете позицию при новых фактах, но не всегда — иногда первое решение остаётся даже когда данные изменились.",
+    low: "Стоит чаще задавать вопрос: а что изменилось? Новые факты требуют другого ответа, и это не слабость."
+  },
+  difficultyVsUnsafety: {
+    high: "Вы проверяете: это сопротивление усилию или сигнал о небезопасной среде — важное различение, которое защищает ребёнка.",
+    mid: "Вы замечаете разницу между трудностью и угрозой, хотя иногда это требует дополнительного вопроса к себе.",
+    low: "Полезно чаще спрашивать: это обычная трудность роста, или ребёнок посылает сигнал о среде, перегрузе, унижении?"
+  }
+};
+
 const reactionQuestions = [
   {
     id: "safety-or-discomfort",
@@ -638,6 +676,11 @@ function html() {
     .sbar-inline-art .art-meta { font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
     .sbar-inline-art h4 { font-size: 13px; font-weight: 500; margin: 0 0 5px; color: var(--text); line-height: 1.35; }
     .sbar-inline-art p { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 0 0 8px; }
+    .sbar-level-text { font-size: 14px; line-height: 1.6; color: var(--text); margin: 0 0 10px; }
+    .sbar-tip { background: rgba(240,237,232,.04); border-radius: 10px; padding: 10px 13px; margin: 10px 0 0; }
+    .sbar-tip-label { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+    .sbar-tip p { font-size: 12px; line-height: 1.55; color: var(--muted); margin: 0; }
+    .verdict-line { font-size: 15px; line-height: 1.55; color: var(--text); background: rgba(240,237,232,.05); border-radius: 12px; padding: 14px 16px; margin-bottom: 24px; border-left: 2px solid var(--pink); }
     @media (max-width: 600px) { .strategy-cols { grid-template-columns: 1fr; } }
     @media (max-width: 768px) {
       /* ── Scroll animations: disable on mobile to avoid invisible gaps ── */
@@ -888,6 +931,7 @@ function html() {
     const ATTENTION_TITLES = ${JSON.stringify(attentionTitles)};
     const ATTENTION_DESCRIPTIONS = ${JSON.stringify(attentionDescriptions)};
     const SCALE_HOWTO = ${JSON.stringify(scaleHowTo)};
+    const SCALE_LEVEL_TEXTS = ${JSON.stringify(scaleLevelTexts)};
     const REACTION_QUESTIONS = ${JSON.stringify(reactionQuestions)};
     const LEARNING_MATERIALS = ${JSON.stringify(learningMaterials)};
     const REACTION_BY_SCALE = {
@@ -1089,10 +1133,12 @@ function html() {
         const tag = isAttention ? '<span style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--yellow);background:rgba(245,208,96,.12);padding:2px 7px;border-radius:99px;margin-left:8px">зона внимания</span>' : isStrongest ? '<span style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mint);background:rgba(125,219,184,.12);padding:2px 7px;border-radius:99px;margin-left:8px">сильная</span>' : '';
         const barCol = isAttention ? 'var(--yellow)' : isStrongest ? 'var(--mint)' : idx < 3 ? 'var(--accent)' : 'rgba(240,237,232,.2)';
         const icon = SCALE_ICONS[key] || '';
+        const level = v >= 70 ? 'high' : v >= 50 ? 'mid' : 'low';
         const zoneText = v >= 70 ? 'развита' : v >= 50 ? 'умеренная' : 'зона роста';
         const zoneBg = v >= 70 ? 'rgba(125,219,184,.13)' : v >= 50 ? 'rgba(82,127,240,.13)' : 'rgba(245,208,96,.13)';
         const zoneCol = v >= 70 ? 'var(--mint)' : v >= 50 ? 'var(--blue)' : 'var(--yellow)';
         const zoneLabel = '<span class="sbar-zone" style="background:' + zoneBg + ';color:' + zoneCol + '">' + zoneText + '</span>';
+        const levelText = (SCALE_LEVEL_TEXTS[key] || {})[level] || '';
         const art = LEARNING_MATERIALS.find(item => item.scaleKeys?.includes(key));
         const artHtml = art
           ? '<div class="sbar-inline-art"><p class="art-meta">' + escapeHtml(art.format) + (art.author ? ' · ' + escapeHtml(art.author) : '') + '</p><h4>' + escapeHtml(art.title) + '</h4><p>' + escapeHtml(art.why) + '</p>' + (art.href ? '<a class="pill" href="' + escapeHtml(art.href) + '" target="_blank" rel="noreferrer" style="font-size:11px">Открыть →</a>' : '') + '</div>'
@@ -1101,8 +1147,9 @@ function html() {
           + '<div class="sbar-head"><div style="display:flex;align-items:center;gap:6px;flex:1;flex-wrap:wrap">' + icon + '<span class="sbar-title">' + SCALE_TITLES[key] + '</span>' + tag + '</div>'
           + '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="sbar-num" style="color:' + barCol + '">' + v + '</span>' + zoneLabel + '</div></div>'
           + '<div class="sbar-track"><div class="sbar-fill" style="width:' + v + '%;background:' + barCol + '"></div></div>'
-          + '<p class="sbar-desc">' + escapeHtml(SCALE_DESCRIPTIONS[key]) + '</p>'
-          + '<p class="fine sbar-howto"><strong style="color:var(--text)">Как ' + escapeHtml(howTo.label) + ' ребенка здесь:</strong> ' + escapeHtml(howTo.text) + '</p>'
+          + (levelText ? '<p class="sbar-level-text">' + escapeHtml(levelText) + '</p>' : '')
+          + '<p class="fine" style="margin:0 0 0;color:rgba(240,237,232,.3);font-size:12px">' + escapeHtml(SCALE_DESCRIPTIONS[key]) + '</p>'
+          + '<div class="sbar-tip"><p class="sbar-tip-label">попробуйте</p><p>' + escapeHtml(howTo.text) + '</p></div>'
           + artHtml
           + '</div>';
       }).join('');
@@ -1119,7 +1166,8 @@ function html() {
         + '<div class="result-radar-col"><div class="result-radar-wrap">' + radarSVG + '</div>'
         + '<p class="fine" style="text-align:center;margin-top:10px;color:rgba(240,237,232,.28);letter-spacing:.06em;text-transform:uppercase;font-size:10px">карта реакций</p></div>'
         + '<div class="result-insights">'
-        + '<p class="fine" style="color:var(--muted);margin-bottom:24px;font-size:11px;letter-spacing:.1em;text-transform:uppercase">' + (demo ? 'демо · результат' : 'ваш результат') + '</p>'
+        + '<p class="fine" style="color:var(--muted);margin-bottom:16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase">' + (demo ? 'демо · результат' : 'ваш результат') + '</p>'
+        + '<p class="verdict-line">Ваша сила — <strong>' + STRENGTH_TITLES[result.strongest].toLowerCase() + '</strong>. Точка роста — ' + ATTENTION_TITLES[result.attention].toLowerCase() + '.</p>'
         + '<div class="ri-item ri-strong"><p class="ri-label" style="color:var(--mint)">что делаете первым</p><h3>' + STRENGTH_TITLES[result.strongest] + '</h3><p class="ri-text">' + escapeHtml(STRENGTH_DESCRIPTIONS[result.strongest]) + '</p></div>'
         + '<div class="ri-item ri-second"><p class="ri-label" style="color:var(--blue)">вторая опора</p><h3>' + STRENGTH_TITLES[result.second] + '</h3><p class="ri-text">' + escapeHtml(STRENGTH_DESCRIPTIONS[result.second]) + '</p></div>'
         + '<div class="ri-item ri-attention"><p class="ri-label" style="color:var(--yellow)">зона внимания</p><h3>' + ATTENTION_TITLES[result.attention] + '</h3><p class="ri-text">' + escapeHtml(ATTENTION_DESCRIPTIONS[result.attention]) + '</p></div>'
