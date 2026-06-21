@@ -1178,7 +1178,8 @@ function html() {
         + '<section class="card" style="margin-top:32px"><p class="kicker" style="color:var(--yellow)">что делать дальше</p><h2>Три коротких шага после результата</h2><div class="rows"><div class="row"><h3>1. Сразу — возьмите фразу для разговора</h3><p>Она нужна не для идеального воспитания, а чтобы выиграть паузу между автоматической реакцией и следующим действием.</p></div><div class="row"><h3>2. На неделю — один маленький эксперимент</h3><p>При следующем «не хочу» сначала спросите себя: <strong>' + escapeHtml(experiment.title) + '</strong></p><p class="fine">' + escapeHtml(experiment.text) + '</p></div><div class="row"><h3>3. Развивать через практику</h3><p>Материалы к каждой шкале — прямо в расшифровке выше.</p></div></div><p class="fine">Эти шаги — общие практические подсказки, а не индивидуальные рекомендации.</p></section>'
         + '<details class="card"><summary><h2>Фразы для разговора</h2></summary><p>«Я вижу, что ты сейчас не хочешь. Давай разберемся почему, но договоренность сама по себе не исчезает».</p><p>«Сначала проверим, что произошло, а потом выберем решение, которое не бросает ни тебя, ни правило».</p></details>'
         + '<details class="card" style="border-color:var(--mint);background:var(--bg)"><summary><h2>Ограничение результата</h2></summary><p>Этот результат отражает ваши решения в шести смоделированных ситуациях. В реальной жизни поведение зависит от возраста ребенка, контекста, усталости, отношений и многих других факторов. Используйте разбор как материал для наблюдения, а не как окончательный вывод о себе.</p></details>'
-        + (demo ? '' : '<section class="card" id="feedback-block"><p class="kicker" style="color:var(--mint)">помогите тесту стать точнее</p><h2>Похож ли этот портрет на вас?</h2><div class="rows"><div class="row" data-feedback-form><div class="actions"><button class="button" data-feedback="yes">Да, похож</button><button class="button" data-feedback="partly">Скорее да</button><button class="button" data-feedback="no">Нет, не похож</button></div><textarea data-feedback-text rows="3" placeholder="Что не совпало или что хотелось бы добавить? (необязательно)" style="width:100%;margin-top:12px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font-family:inherit"></textarea><div class="actions" style="margin-top:12px"><button class="button" data-feedback-send>Отправить отзыв</button><span class="fine" data-feedback-status></span></div></div></div></section>');
+        + (demo ? '' : '<section class="card" id="feedback-block"><p class="kicker" style="color:var(--mint)">помогите тесту стать точнее</p><h2>Похож ли этот портрет на вас?</h2><div class="rows"><div class="row" data-feedback-form><div class="actions"><button class="button" data-feedback="yes">Да, похож</button><button class="button" data-feedback="partly">Скорее да</button><button class="button" data-feedback="no">Нет, не похож</button></div><textarea data-feedback-text rows="3" placeholder="Что не совпало или что хотелось бы добавить? (необязательно)" style="width:100%;margin-top:12px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font-family:inherit"></textarea><div class="actions" style="margin-top:12px"><button class="button" data-feedback-send>Отправить отзыв</button></div></div></div></section>')
+        + '<div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-top:0"><div><p style="margin:0 0 4px;font-size:15px;font-weight:500;color:var(--text)">Остались вопросы или что-то не сработало?</p><p class="fine" style="margin:0">Напишите — разберёмся.</p></div><a class="button secondary" href="mailto:galya.chooru@gmail.com" style="flex-shrink:0">Связаться с разработчиком</a></div>';
     }
 
 
@@ -1259,7 +1260,6 @@ function html() {
           feedbackForm.querySelectorAll("[data-feedback]").forEach(b => b.classList.toggle("active", b === btn));
         }));
         const sendBtn = feedbackForm.querySelector("[data-feedback-send]");
-        const status = feedbackForm.querySelector("[data-feedback-status]");
         sendBtn.addEventListener("click", () => {
           const text = feedbackForm.querySelector("[data-feedback-text]").value;
           const result = JSON.parse(localStorage.getItem(RESULT_KEY) || "null");
@@ -1267,7 +1267,10 @@ function html() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ type: "feedback", result, rating, comment: text })
-          }).then(() => { status.textContent = "Спасибо за отзыв!"; });
+          }).then(() => {
+            const block = document.getElementById("feedback-block");
+            if (block) block.innerHTML = '<p class="kicker" style="color:var(--mint);margin-bottom:12px">спасибо</p><h2 style="margin:0 0 8px">Отзыв отправлен</h2><p style="color:var(--muted);font-size:14px;margin:0">Это помогает сделать тест точнее. Если хотите добавить что-то — напишите на <a href="mailto:galya.chooru@gmail.com" style="color:var(--text)">galya.chooru@gmail.com</a>.</p>';
+          });
         });
       }
     }
