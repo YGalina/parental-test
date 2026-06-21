@@ -1132,6 +1132,7 @@ function html() {
         const isStrongest = key === result.strongest, isAttention = key === result.attention;
         const tag = isAttention ? '<span style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--yellow);background:rgba(245,208,96,.12);padding:2px 7px;border-radius:99px;margin-left:8px">зона внимания</span>' : isStrongest ? '<span style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mint);background:rgba(125,219,184,.12);padding:2px 7px;border-radius:99px;margin-left:8px">сильная</span>' : '';
         const barCol = isAttention ? 'var(--yellow)' : isStrongest ? 'var(--mint)' : idx < 3 ? 'var(--accent)' : 'rgba(240,237,232,.2)';
+        const numCol = isAttention ? 'var(--yellow)' : isStrongest ? 'var(--mint)' : 'rgba(240,237,232,.65)';
         const icon = SCALE_ICONS[key] || '';
         const level = v >= 70 ? 'high' : v >= 50 ? 'mid' : 'low';
         const zoneText = v >= 70 ? 'развита' : v >= 50 ? 'умеренная' : 'зона роста';
@@ -1145,7 +1146,7 @@ function html() {
           : '';
         return '<div class="sbar-item">'
           + '<div class="sbar-head"><div style="display:flex;align-items:center;gap:6px;flex:1;flex-wrap:wrap">' + icon + '<span class="sbar-title">' + SCALE_TITLES[key] + '</span>' + tag + '</div>'
-          + '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="sbar-num" style="color:' + barCol + '">' + v + '</span>' + zoneLabel + '</div></div>'
+          + '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="sbar-num" style="color:' + numCol + '">' + v + '</span>' + zoneLabel + '</div></div>'
           + '<div class="sbar-track"><div class="sbar-fill" style="width:' + v + '%;background:' + barCol + '"></div></div>'
           + (levelText ? '<p class="sbar-level-text">' + escapeHtml(levelText) + '</p>' : '')
           + '<p class="fine" style="margin:0 0 0;color:rgba(240,237,232,.3);font-size:12px">' + escapeHtml(SCALE_DESCRIPTIONS[key]) + '</p>'
