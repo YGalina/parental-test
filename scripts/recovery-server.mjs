@@ -1131,13 +1131,14 @@ function html() {
         const howTo = SCALE_HOWTO[key];
         const isStrongest = key === result.strongest, isAttention = key === result.attention;
         const tag = isAttention ? '<span style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--yellow);background:rgba(245,208,96,.12);padding:2px 7px;border-radius:99px;margin-left:8px">зона внимания</span>' : isStrongest ? '<span style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mint);background:rgba(125,219,184,.12);padding:2px 7px;border-radius:99px;margin-left:8px">сильная</span>' : '';
-        const barCol = isAttention ? 'var(--yellow)' : isStrongest ? 'var(--mint)' : idx < 3 ? 'var(--accent)' : 'rgba(240,237,232,.2)';
-        const numCol = isAttention ? 'var(--yellow)' : isStrongest ? 'var(--mint)' : 'rgba(240,237,232,.65)';
+        const isLow = v < 50;
+        const barCol = isAttention ? 'var(--yellow)' : isStrongest ? 'var(--mint)' : isLow ? 'var(--red)' : idx < 3 ? 'var(--accent)' : 'rgba(240,237,232,.2)';
+        const numCol = isAttention ? 'var(--yellow)' : isStrongest ? 'var(--mint)' : isLow ? 'var(--red)' : 'rgba(240,237,232,.65)';
         const icon = SCALE_ICONS[key] || '';
         const level = v >= 70 ? 'high' : v >= 50 ? 'mid' : 'low';
         const zoneText = v >= 70 ? 'развита' : v >= 50 ? 'умеренная' : 'зона роста';
-        const zoneBg = v >= 70 ? 'rgba(125,219,184,.13)' : v >= 50 ? 'rgba(82,127,240,.13)' : 'rgba(245,208,96,.13)';
-        const zoneCol = v >= 70 ? 'var(--mint)' : v >= 50 ? 'var(--blue)' : 'var(--yellow)';
+        const zoneBg = v >= 70 ? 'rgba(125,219,184,.13)' : v >= 50 ? 'rgba(82,127,240,.13)' : 'rgba(255,107,107,.13)';
+        const zoneCol = v >= 70 ? 'var(--mint)' : v >= 50 ? 'var(--blue)' : 'var(--red)';
         const zoneLabel = '<span class="sbar-zone" style="background:' + zoneBg + ';color:' + zoneCol + '">' + zoneText + '</span>';
         const levelText = (SCALE_LEVEL_TEXTS[key] || {})[level] || '';
         const art = LEARNING_MATERIALS.find(item => item.scaleKeys?.includes(key));
@@ -1175,7 +1176,7 @@ function html() {
         + '<div class="actions" style="margin-top:28px"><button class="button secondary" data-start>Пройти заново</button><a class="pill" href="#test" data-link>К тесту</a></div>'
         + '</div></div>'
         + strategyBlock
-        + '<div class="result-scales-wrap"><p class="kicker" style="margin-bottom:8px;color:var(--muted)">расшифровка по шкалам</p><p style="font-size:13px;color:rgba(240,237,232,.35);margin:0 0 24px;line-height:1.5">Рядом с каждым числом — пометка: <span style="color:var(--mint)">развита</span> (70+), <span style="color:var(--blue)">умеренная</span> (50–69) или <span style="color:var(--yellow)">зона роста</span> (&lt;50). И статья, если есть.</p><div class="result-scales">' + scaleCards + '</div></div>'
+        + '<div class="result-scales-wrap"><p class="kicker" style="margin-bottom:8px;color:var(--muted)">расшифровка по шкалам</p><p style="font-size:13px;color:rgba(240,237,232,.35);margin:0 0 24px;line-height:1.5">Рядом с каждым числом — пометка: <span style="color:var(--mint)">развита</span> (70+), <span style="color:var(--blue)">умеренная</span> (50–69) или <span style="color:var(--red)">зона роста</span> (&lt;50). И статья, если есть.</p><div class="result-scales">' + scaleCards + '</div></div>'
         + '<section class="card" style="margin-top:32px"><p class="kicker" style="color:var(--yellow)">что делать дальше</p><h2>Три коротких шага после результата</h2><div class="rows"><div class="row"><h3>1. Сразу — возьмите фразу для разговора</h3><p>Она нужна не для идеального воспитания, а чтобы выиграть паузу между автоматической реакцией и следующим действием.</p></div><div class="row"><h3>2. На неделю — один маленький эксперимент</h3><p>При следующем «не хочу» сначала спросите себя: <strong>' + escapeHtml(experiment.title) + '</strong></p><p class="fine">' + escapeHtml(experiment.text) + '</p></div><div class="row"><h3>3. Развивать через практику</h3><p>Материалы к каждой шкале — прямо в расшифровке выше.</p></div></div><p class="fine">Эти шаги — общие практические подсказки, а не индивидуальные рекомендации.</p></section>'
         + '<details class="card"><summary><h2>Фразы для разговора</h2></summary><p>«Я вижу, что ты сейчас не хочешь. Давай разберемся почему, но договоренность сама по себе не исчезает».</p><p>«Сначала проверим, что произошло, а потом выберем решение, которое не бросает ни тебя, ни правило».</p></details>'
         + '<details class="card" style="border-color:var(--mint);background:var(--bg)"><summary><h2>Ограничение результата</h2></summary><p>Этот результат отражает ваши решения в шести смоделированных ситуациях. В реальной жизни поведение зависит от возраста ребенка, контекста, усталости, отношений и многих других факторов. Используйте разбор как материал для наблюдения, а не как окончательный вывод о себе.</p></details>'
