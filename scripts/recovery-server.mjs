@@ -627,6 +627,18 @@ function html() {
     .sbar-fill { height: 100%; border-radius: 2px; transition: width 1s cubic-bezier(0.16,1,0.3,1); }
     .sbar-desc { font-size: 13px; color: var(--muted); line-height: 1.55; margin: 0 0 4px; }
     .sbar-howto { margin: 0; line-height: 1.5; }
+    .strategy-block { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 28px; margin-bottom: 40px; }
+    .strategy-pattern { font-size: 14px; line-height: 1.65; color: var(--muted); margin: 0 0 12px; }
+    .strategy-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+    .strategy-col { background: rgba(240,237,232,.045); border-radius: 14px; padding: 16px 18px; }
+    .strategy-col-label { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; display: block; }
+    .strategy-col p { font-size: 13px; line-height: 1.55; color: var(--muted); margin: 0; }
+    .sbar-zone { font-size: 10px; letter-spacing: .07em; text-transform: uppercase; font-weight: 600; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+    .sbar-inline-art { margin-top: 14px; padding: 13px 15px; background: rgba(240,237,232,.04); border-radius: 12px; border-left: 2px solid rgba(82,127,240,.4); }
+    .sbar-inline-art .art-meta { font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+    .sbar-inline-art h4 { font-size: 13px; font-weight: 500; margin: 0 0 5px; color: var(--text); line-height: 1.35; }
+    .sbar-inline-art p { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 0 0 8px; }
+    @media (max-width: 600px) { .strategy-cols { grid-template-columns: 1fr; } }
     @media (max-width: 768px) {
       /* ── Scroll animations: disable on mobile to avoid invisible gaps ── */
       .stagger > *, .fade-up, .reveal > * {
@@ -1077,14 +1089,32 @@ function html() {
         const tag = isAttention ? '<span style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--yellow);background:rgba(245,208,96,.12);padding:2px 7px;border-radius:99px;margin-left:8px">зона внимания</span>' : isStrongest ? '<span style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mint);background:rgba(125,219,184,.12);padding:2px 7px;border-radius:99px;margin-left:8px">сильная</span>' : '';
         const barCol = isAttention ? 'var(--yellow)' : isStrongest ? 'var(--mint)' : idx < 3 ? 'var(--accent)' : 'rgba(240,237,232,.2)';
         const icon = SCALE_ICONS[key] || '';
+        const zoneText = v >= 70 ? 'развита' : v >= 50 ? 'умеренная' : 'зона роста';
+        const zoneBg = v >= 70 ? 'rgba(125,219,184,.13)' : v >= 50 ? 'rgba(82,127,240,.13)' : 'rgba(245,208,96,.13)';
+        const zoneCol = v >= 70 ? 'var(--mint)' : v >= 50 ? 'var(--blue)' : 'var(--yellow)';
+        const zoneLabel = '<span class="sbar-zone" style="background:' + zoneBg + ';color:' + zoneCol + '">' + zoneText + '</span>';
+        const art = LEARNING_MATERIALS.find(item => item.scaleKeys?.includes(key));
+        const artHtml = art
+          ? '<div class="sbar-inline-art"><p class="art-meta">' + escapeHtml(art.format) + (art.author ? ' · ' + escapeHtml(art.author) : '') + '</p><h4>' + escapeHtml(art.title) + '</h4><p>' + escapeHtml(art.why) + '</p>' + (art.href ? '<a class="pill" href="' + escapeHtml(art.href) + '" target="_blank" rel="noreferrer" style="font-size:11px">Открыть →</a>' : '') + '</div>'
+          : '';
         return '<div class="sbar-item">'
           + '<div class="sbar-head"><div style="display:flex;align-items:center;gap:6px;flex:1;flex-wrap:wrap">' + icon + '<span class="sbar-title">' + SCALE_TITLES[key] + '</span>' + tag + '</div>'
-          + '<span class="sbar-num" style="color:' + barCol + '">' + v + '</span></div>'
+          + '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="sbar-num" style="color:' + barCol + '">' + v + '</span>' + zoneLabel + '</div></div>'
           + '<div class="sbar-track"><div class="sbar-fill" style="width:' + v + '%;background:' + barCol + '"></div></div>'
           + '<p class="sbar-desc">' + escapeHtml(SCALE_DESCRIPTIONS[key]) + '</p>'
           + '<p class="fine sbar-howto"><strong style="color:var(--text)">Как ' + escapeHtml(howTo.label) + ' ребенка здесь:</strong> ' + escapeHtml(howTo.text) + '</p>'
+          + artHtml
           + '</div>';
       }).join('');
+      const strategyBlock = '<div class="strategy-block">'
+        + '<p class="kicker" style="color:var(--pink);margin-bottom:14px">стратегия родителя</p>'
+        + '<h2 style="font-family:\'Cormorant Garamond\',Georgia,serif;font-size:clamp(22px,2.4vw,30px);font-weight:400;margin:0 0 16px;line-height:1.2">Ваш паттерн под давлением</h2>'
+        + '<p class="strategy-pattern">' + escapeHtml(pressurePattern(result.normalized)) + '</p>'
+        + '<p class="strategy-pattern">' + escapeHtml(twistPattern(result.normalized)) + '</p>'
+        + '<div class="strategy-cols">'
+        + '<div class="strategy-col"><span class="strategy-col-label" style="color:var(--mint)">плюсы</span><p>' + escapeHtml(STRENGTH_DESCRIPTIONS[result.strongest]) + ' ' + escapeHtml(STRENGTH_DESCRIPTIONS[result.second]) + '</p></div>'
+        + '<div class="strategy-col"><span class="strategy-col-label" style="color:var(--yellow)">зона роста</span><p>' + escapeHtml(ATTENTION_DESCRIPTIONS[result.attention]) + '</p></div>'
+        + '</div></div>';
       return '<div class="result-top">'
         + '<div class="result-radar-col"><div class="result-radar-wrap">' + radarSVG + '</div>'
         + '<p class="fine" style="text-align:center;margin-top:10px;color:rgba(240,237,232,.28);letter-spacing:.06em;text-transform:uppercase;font-size:10px">карта реакций</p></div>'
@@ -1095,10 +1125,10 @@ function html() {
         + '<div class="ri-item ri-attention"><p class="ri-label" style="color:var(--yellow)">зона внимания</p><h3>' + ATTENTION_TITLES[result.attention] + '</h3><p class="ri-text">' + escapeHtml(ATTENTION_DESCRIPTIONS[result.attention]) + '</p></div>'
         + '<div class="actions" style="margin-top:28px"><button class="button secondary" data-start>Пройти заново</button><a class="pill" href="#test" data-link>К тесту</a></div>'
         + '</div></div>'
-        + '<div class="result-scales-wrap"><p class="kicker" style="margin-bottom:24px;color:var(--muted)">семь шкал</p><div class="result-scales">' + scaleCards + '</div></div>'
-        + '<section class="card" style="margin-top:32px"><p class="kicker" style="color:var(--yellow)">что делать дальше</p><h2>Три коротких шага после результата</h2><div class="rows"><div class="row"><h3>1. Сразу — возьмите фразу для разговора</h3><p>Она нужна не для идеального воспитания, а чтобы выиграть паузу между автоматической реакцией и следующим действием.</p></div><div class="row"><h3>2. На неделю — один маленький эксперимент</h3><p>При следующем «не хочу» сначала спросите себя: <strong>' + escapeHtml(experiment.title) + '</strong></p><p class="fine">' + escapeHtml(experiment.text) + '</p></div><div class="row"><h3>3. Дальше — материалы под профиль</h3><p>Ниже — подборка книг, статей и рамок, связанных с вашей зоной внимания и сильными сторонами.</p></div></div><p class="fine">Эти шаги — общие практические подсказки, а не индивидуальные рекомендации.</p></section>'
+        + strategyBlock
+        + '<div class="result-scales-wrap"><p class="kicker" style="margin-bottom:8px;color:var(--muted)">расшифровка по шкалам</p><p style="font-size:13px;color:rgba(240,237,232,.35);margin:0 0 24px;line-height:1.5">Рядом с каждым числом — пометка: <span style="color:var(--mint)">развита</span> (70+), <span style="color:var(--blue)">умеренная</span> (50–69) или <span style="color:var(--yellow)">зона роста</span> (&lt;50). И статья, если есть.</p><div class="result-scales">' + scaleCards + '</div></div>'
+        + '<section class="card" style="margin-top:32px"><p class="kicker" style="color:var(--yellow)">что делать дальше</p><h2>Три коротких шага после результата</h2><div class="rows"><div class="row"><h3>1. Сразу — возьмите фразу для разговора</h3><p>Она нужна не для идеального воспитания, а чтобы выиграть паузу между автоматической реакцией и следующим действием.</p></div><div class="row"><h3>2. На неделю — один маленький эксперимент</h3><p>При следующем «не хочу» сначала спросите себя: <strong>' + escapeHtml(experiment.title) + '</strong></p><p class="fine">' + escapeHtml(experiment.text) + '</p></div><div class="row"><h3>3. Развивать через практику</h3><p>Материалы к каждой шкале — прямо в расшифровке выше.</p></div></div><p class="fine">Эти шаги — общие практические подсказки, а не индивидуальные рекомендации.</p></section>'
         + '<details class="card"><summary><h2>Фразы для разговора</h2></summary><p>«Я вижу, что ты сейчас не хочешь. Давай разберемся почему, но договоренность сама по себе не исчезает».</p><p>«Сначала проверим, что произошло, а потом выберем решение, которое не бросает ни тебя, ни правило».</p></details>'
-        + (materialRows ? '<details class="card"><summary><p class="kicker" style="color:var(--blue)">что почитать дальше</p><h2>Материалы под ваш профиль</h2></summary><div class="rows">' + materialRows + '</div></details>' : '')
         + '<details class="card" style="border-color:var(--mint);background:var(--bg)"><summary><h2>Ограничение результата</h2></summary><p>Этот результат отражает ваши решения в шести смоделированных ситуациях. В реальной жизни поведение зависит от возраста ребенка, контекста, усталости, отношений и многих других факторов. Используйте разбор как материал для наблюдения, а не как окончательный вывод о себе.</p></details>'
         + (demo ? '' : '<section class="card" id="feedback-block"><p class="kicker" style="color:var(--mint)">помогите тесту стать точнее</p><h2>Похож ли этот портрет на вас?</h2><div class="rows"><div class="row" data-feedback-form><div class="actions"><button class="button" data-feedback="yes">Да, похож</button><button class="button" data-feedback="partly">Скорее да</button><button class="button" data-feedback="no">Нет, не похож</button></div><textarea data-feedback-text rows="3" placeholder="Что не совпало или что хотелось бы добавить? (необязательно)" style="width:100%;margin-top:12px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font-family:inherit"></textarea><div class="actions" style="margin-top:12px"><button class="button" data-feedback-send>Отправить отзыв</button><span class="fine" data-feedback-status></span></div></div></div></section>');
     }
