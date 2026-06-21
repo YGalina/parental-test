@@ -1342,15 +1342,18 @@ const server = http.createServer((req, res) => {
         fs.mkdirSync(path.dirname(resultsLogPath), { recursive: true });
         fs.appendFileSync(resultsLogPath, JSON.stringify(entry) + "\n", "utf-8");
         // Async write to Google Sheets (don't block response)
-        const n = entry.normalized || {};
+        if (entry.type === "result") {
+        const r = entry.result || {};
+        const n = r.normalized || {};
         const row = [
           new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" }),
-          entry.strongest || "", entry.second || "", entry.attention || "",
+          r.strongest || "", r.second || "", r.attention || "",
           n.adultResponsibility || "", n.emotionalContact || "", n.boundariesConsistency || "",
           n.autonomySupport || "", n.conflictTolerance || "", n.flexibility || "",
           n.difficultyVsUnsafety || ""
         ];
         appendToSheet(row).catch(e => console.error("Sheets error:", e.message));
+        }
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ ok: true }));
       } catch {
