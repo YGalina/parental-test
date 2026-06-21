@@ -992,6 +992,8 @@ function html() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: "result", result, answers: state.answers })
       }).catch(() => {});
+      state.index = QUESTIONS.length; // move past last question so testSection shows resultPage
+      saveState();
       render();
       const target = document.querySelector("#test");
       if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
