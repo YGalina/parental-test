@@ -224,6 +224,17 @@ export const testCases: TestCase[] = [
         helper: "Не указывайте имена и другие личные данные ребенка.",
         minLength: 15,
         maxLength: 400
+      },
+      {
+        id: "chores-twist",
+        type: "twist",
+        prompt: "Выясняется, что ребенок сегодня получил двойку и скрыл это. Именно поэтому он хотел побыстрее уйти в комнату. Что меняется в вашей реакции?",
+        options: [
+          { id: "chores-twist-feelings-first", label: "Отложу разговор об уборке и сначала поговорю про двойку — понять, что случилось, важнее.", rationale: "Контакт до требований.", weights: w({ emotionalContact: 3, flexibility: 2, adultResponsibility: 1 }) },
+          { id: "chores-twist-both", label: "Признаю, что двойка — это важно, но уборка остается: договоренности не отменяются из-за плохого дня.", rationale: "Сохраняет границы и не игнорирует состояние.", weights: w({ boundariesConsistency: 2, emotionalContact: 2, adultResponsibility: 2, flexibility: 1 }) },
+          { id: "chores-twist-forgive", label: "На сегодня уберу сама — он и так расстроен, не буду добавлять.", rationale: "Снижает напряжение, но снимает договоренность.", weights: w({ emotionalContact: 2, flexibility: 1, boundariesConsistency: -2, autonomySupport: -1 }) },
+          { id: "chores-twist-why-hide", label: "Разберусь, почему он скрыл двойку — это важнее самой уборки.", rationale: "Фокус на доверии, но уборка откладывается без обсуждения.", weights: w({ emotionalContact: 3, adultResponsibility: 2, difficultyVsUnsafety: 1, boundariesConsistency: -1 }) }
+        ]
       }
     ]
   },
@@ -233,7 +244,7 @@ export const testCases: TestCase[] = [
     title: "«Бесполезное» увлечение",
     childAge: 13,
     scenario:
-      "Ребенок хочет оставить дополнительную математику и заняться созданием костюмов для косплея. Вам кажется, что новое увлечение не принесет пользы в будущем.",
+      "Ребенок хочет оставить дополнительную математику и заняться созданием костюмов — шить персонажей из игр и аниме. Вам кажется, что новое увлечение не принесет пользы в будущем.",
     checks: ["отделение интересов ребенка от ожиданий родителя", "поддержка самостоятельности", "отношение к результату", "навыки за непривычной деятельностью"],
     questions: [
       {
@@ -285,7 +296,7 @@ export const testCases: TestCase[] = [
     title: "После неудачного выступления",
     childAge: 12,
     scenario:
-      "Ребенок долго готовился к олимпиаде или соревнованию, но показал слабый результат. Он говорит: «Больше никогда не буду участвовать».",
+      "Ребенок несколько месяцев готовился к соревнованию, но показал слабый результат. Сразу после говорит: «Больше никогда не буду участвовать».",
     checks: ["отношение к ошибке", "ориентация на процесс", "поддержка", "необесценивание разочарования", "разбор опыта"],
     questions: [
       {
@@ -317,6 +328,17 @@ export const testCases: TestCase[] = [
         helper: "Не указывайте имена и другие личные данные ребенка.",
         minLength: 15,
         maxLength: 400
+      },
+      {
+        id: "failure-twist",
+        type: "twist",
+        prompt: "Организатор подходит и говорит при ребенке: «Жаль, в следующем году готовьтесь серьёзнее». Что вы сделаете?",
+        options: [
+          { id: "failure-twist-protect", label: "Мягко прерву разговор с организатором и уведу ребенка — сейчас не время для разбора.", rationale: "Защищает ребенка от публичной оценки в момент переживания.", weights: w({ emotionalContact: 3, adultResponsibility: 2, difficultyVsUnsafety: 2 }) },
+          { id: "failure-twist-agree-loudly", label: "Поддержу слова организатора: «Да, в следующий раз подготовимся лучше» — и потом поговорим дома.", rationale: "Не обостряет ситуацию, но может ощущаться ребенком как предательство.", weights: w({ conflictTolerance: 2, boundariesConsistency: 1, emotionalContact: -1, adultResponsibility: 1 }) },
+          { id: "failure-twist-defend", label: "Скажу организатору, что ребенок старался, и публичная оценка сейчас неуместна.", rationale: "Защищает достоинство, но может создать конфликт.", weights: w({ adultResponsibility: 3, emotionalContact: 2, conflictTolerance: 2, difficultyVsUnsafety: 1 }) },
+          { id: "failure-twist-ask-child", label: "Ничего не скажу организатору, а потом спрошу ребенка, как ему были эти слова.", rationale: "Уважает реакцию ребенка, но оставляет его одного в момент.", weights: w({ autonomySupport: 2, emotionalContact: 1, adultResponsibility: -1 }) }
+        ]
       }
     ]
   }
