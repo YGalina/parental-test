@@ -132,6 +132,54 @@ const attentionDescriptions = {
   difficultyVsUnsafety: "Стоит чаще задавать вопрос: это обычная трудность навыка или сигнал о небезопасности, унижении, перегрузе?"
 };
 
+const archetypes = {
+  director: {
+    id: 'director',
+    name: 'Дирижёр',
+    image: '/archetype-director.png',
+    tagline: 'Работающая мама, которая всегда в образе',
+    relief: 'Если вы Дирижёр — перестаньте мучить себя за то, что вы не умеете "просто побыть с ребёнком без цели". Ваша система работает. Ребёнок в безопасности, всё спланировано. Вам не нужен другой характер. Вам нужно добавить 5 минут в день, когда вы не организуете — просто присутствуете. Без повестки.',
+    strength: 'Вы создаёте предсказуемость и структуру. Ребёнок знает, что будет дальше — это и есть безопасность.',
+    growth: 'Эмоциональное присутствие без задачи.',
+  },
+  anchor: {
+    id: 'anchor',
+    name: 'Опора',
+    image: '/archetype-anchor.png',
+    tagline: 'Домохозяйка, которая тащит всё на себе',
+    relief: 'Если вы Опора — не корите себя за то, что не успеваете на себя. Вы держите семью. Это огромная работа, которую никто не видит. Но вот что важно: когда вы на последнем ресурсе — ребёнок это чувствует. Ваша задача не стать другой — научиться говорить вслух "мне сейчас нужна пауза" раньше, чем взорвётесь.',
+    strength: 'Вы держите структуру и берёте ответственность — в семье есть надёжность.',
+    growth: 'Разрешить себе не быть опорой 24/7.',
+  },
+  mentor: {
+    id: 'mentor',
+    name: 'Наставник',
+    image: '/archetype-mentor.png',
+    tagline: 'Родитель, который хочет вырастить хорошего человека',
+    relief: 'Если вы Наставник — перестаньте переживать, что недостаточно "тёплый". Вы даёте ребёнку то, что даст ему жизнь — опыт справляться самому. Это ценнее объятий в моменте. Вам не нужно становиться другим. Нужно научить ребёнка чувствовать, что вы рядом — даже когда не вмешиваетесь.',
+    strength: 'Вы видите ресурс в трудностях и не спасаете там, где ребёнок может справиться сам.',
+    growth: 'Эмоциональный контакт — не урок, а просто быть рядом.',
+  },
+  guardian: {
+    id: 'guardian',
+    name: 'Защитник',
+    image: '/archetype-guardian.png',
+    tagline: 'Мама, которая слишком сильно любит',
+    relief: 'Если вы Защитник — ваша любовь огромная, и это не проблема. Проблема в одном: тревога иногда выдаётся ребёнку за заботу, и он это считывает. Как только вы научитесь различать "мне страшно" и "ему реально опасно" — ваши отношения изменятся быстрее, чем вы думаете.',
+    strength: 'Вы глубоко чувствуете ребёнка и готовы дать ему всё.',
+    growth: 'Доверять ребёнку право на собственный опыт — даже болезненный.',
+  },
+  partner: {
+    id: 'partner',
+    name: 'Партнёр',
+    image: '/archetype-partner.png',
+    tagline: 'Взрослый, который сам ещё не до конца вырос',
+    relief: 'Если вы Партнёр — не ругайте себя за мягкость. Ваш контакт с ребёнком — это то, через что работают все важные разговоры. Именно вам ребёнок придёт в 15 лет с настоящей проблемой. Вам не нужен другой характер. Нужна одна граница, которую вы держите молча — без объяснений и переговоров.',
+    strength: 'Вы в контакте с ребёнком. Ему с вами безопасно и тепло.',
+    growth: 'Быть взрослым в отношениях — удерживать границу, даже когда это некомфортно.',
+  },
+};
+
 const scaleHowTo = {
   adultResponsibility: {
     label: "увидеть",
@@ -665,6 +713,17 @@ function html() {
     .sbar-fill { height: 100%; border-radius: 2px; transition: width 1s cubic-bezier(0.16,1,0.3,1); }
     .sbar-desc { font-size: 13px; color: var(--muted); line-height: 1.55; margin: 0 0 4px; }
     .sbar-howto { margin: 0; line-height: 1.5; }
+    .archetype-hero { display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: center; margin-bottom: 48px; background: var(--panel); border: 1px solid var(--line); border-radius: 24px; overflow: hidden; }
+    .archetype-img-wrap { background: rgba(240,237,232,.04); display: flex; align-items: flex-end; justify-content: center; min-height: 320px; padding-top: 20px; }
+    .archetype-img { width: 100%; max-width: 260px; display: block; object-fit: contain; }
+    .archetype-hero-text { padding: 36px 36px 36px 0; }
+    .archetype-name { font-size: clamp(36px,4vw,52px); font-weight: 300; margin: 0 0 8px; line-height: 1.1; }
+    .archetype-tagline { font-size: 14px; color: var(--muted); margin: 0 0 20px; letter-spacing: .02em; }
+    .archetype-relief { font-size: 15px; line-height: 1.7; color: var(--text); background: rgba(240,237,232,.05); border-radius: 14px; padding: 16px 18px; margin-bottom: 20px; border-left: 2px solid var(--pink); }
+    .archetype-meta { display: flex; flex-direction: column; gap: 10px; }
+    .archetype-meta-item { display: flex; gap: 10px; font-size: 14px; line-height: 1.5; }
+    .archetype-meta-label { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; font-weight: 600; white-space: nowrap; padding-top: 2px; min-width: 70px; }
+    @media (max-width: 700px) { .archetype-hero { grid-template-columns: 1fr; } .archetype-img-wrap { min-height: 240px; } .archetype-hero-text { padding: 24px; } }
     .strategy-block { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 28px; margin-bottom: 40px; }
     .strategy-pattern { font-size: 14px; line-height: 1.65; color: var(--muted); margin: 0 0 12px; }
     .strategy-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
@@ -932,6 +991,17 @@ function html() {
     const ATTENTION_DESCRIPTIONS = ${JSON.stringify(attentionDescriptions)};
     const SCALE_HOWTO = ${JSON.stringify(scaleHowTo)};
     const SCALE_LEVEL_TEXTS = ${JSON.stringify(scaleLevelTexts)};
+    const ARCHETYPES = ${JSON.stringify(archetypes)};
+    function getArchetype(n) {
+      const scores = {
+        director: n.adultResponsibility * 1.5 + n.boundariesConsistency * 1 + (100 - n.emotionalContact) * 2 + (100 - n.conflictTolerance) * 1,
+        anchor:   n.adultResponsibility * 2   + n.boundariesConsistency * 2 + n.emotionalContact * 0.5 + (100 - n.flexibility) * 0.5,
+        mentor:   n.autonomySupport * 2        + n.difficultyVsUnsafety * 2  + n.flexibility * 1,
+        guardian: n.emotionalContact * 1.5    + n.adultResponsibility * 1    + (100 - n.autonomySupport) * 2 + (100 - n.difficultyVsUnsafety) * 1,
+        partner:  n.emotionalContact * 2      + n.flexibility * 1            + (100 - n.adultResponsibility) * 2 + (100 - n.boundariesConsistency) * 1.5,
+      };
+      return Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+    }
     const REACTION_QUESTIONS = ${JSON.stringify(reactionQuestions)};
     const LEARNING_MATERIALS = ${JSON.stringify(learningMaterials)};
     const REACTION_BY_SCALE = {
@@ -1111,6 +1181,8 @@ function html() {
         attention: "conflictTolerance"
       } : JSON.parse(localStorage.getItem(RESULT_KEY) || "null");
       if (!result) return '<div class="card question"><h2>Результата пока нет</h2><p>Сначала пройдите тест. Ответы сохранятся локально в браузере.</p><button class="button" data-start>Начать тест</button></div>';
+      const archetypeKey = getArchetype(result.normalized);
+      const archetype = ARCHETYPES[archetypeKey];
       const experiment = REACTION_BY_SCALE[result.attention] || REACTION_QUESTIONS[0];
       const materials = LEARNING_MATERIALS.filter(item => item.scaleKeys?.includes(result.attention) || item.scaleKeys?.includes(result.strongest) || item.scaleKeys?.includes(result.second)).slice(0, 4);
       const materialRows = materials.map(item => '<article class="row"><p class="fine">' + escapeHtml(item.format) + '</p><h3>' + escapeHtml(item.title) + '</h3><p class="fine">' + escapeHtml(item.author) + '</p><p>' + escapeHtml(item.why) + '</p>' + (item.href ? '<a class="pill" href="' + escapeHtml(item.href) + '" target="_blank" rel="noreferrer">Открыть</a>' : '') + '</article>').join("");
@@ -1164,11 +1236,25 @@ function html() {
         + '<div class="strategy-col"><span class="strategy-col-label" style="color:var(--mint)">плюсы</span><p>' + escapeHtml(STRENGTH_DESCRIPTIONS[result.strongest]) + ' ' + escapeHtml(STRENGTH_DESCRIPTIONS[result.second]) + '</p></div>'
         + '<div class="strategy-col"><span class="strategy-col-label" style="color:var(--yellow)">зона роста</span><p>' + escapeHtml(ATTENTION_DESCRIPTIONS[result.attention]) + '</p></div>'
         + '</div></div>';
-      return '<div class="result-top">'
+      const archetypeHero = '<div class="archetype-hero">'
+        + '<div class="archetype-img-wrap"><img src="' + archetype.image + '" alt="' + escapeHtml(archetype.name) + '" class="archetype-img" /></div>'
+        + '<div class="archetype-hero-text">'
+        + '<p class="kicker" style="color:var(--pink);margin-bottom:10px">' + (demo ? 'демо · ваш архетип' : 'ваш архетип') + '</p>'
+        + '<h1 class="archetype-name">' + escapeHtml(archetype.name) + '</h1>'
+        + '<p class="archetype-tagline">' + escapeHtml(archetype.tagline) + '</p>'
+        + '<div class="archetype-relief">' + escapeHtml(archetype.relief) + '</div>'
+        + '<div class="archetype-meta">'
+        + '<div class="archetype-meta-item"><span class="archetype-meta-label" style="color:var(--mint)">сила</span><span>' + escapeHtml(archetype.strength) + '</span></div>'
+        + '<div class="archetype-meta-item"><span class="archetype-meta-label" style="color:var(--yellow)">зона роста</span><span>' + escapeHtml(archetype.growth) + '</span></div>'
+        + '</div>'
+        + '<div class="actions" style="margin-top:24px"><button class="button secondary" data-start>Пройти заново</button></div>'
+        + '</div></div>';
+      return archetypeHero
+        + '<div class="result-top">'
         + '<div class="result-radar-col"><div class="result-radar-wrap">' + radarSVG + '</div>'
         + '<p class="fine" style="text-align:center;margin-top:10px;color:rgba(240,237,232,.28);letter-spacing:.06em;text-transform:uppercase;font-size:10px">карта реакций</p></div>'
         + '<div class="result-insights">'
-        + '<p class="fine" style="color:var(--muted);margin-bottom:16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase">' + (demo ? 'демо · результат' : 'ваш результат') + '</p>'
+        + '<p class="fine" style="color:var(--muted);margin-bottom:16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase">детальный разбор</p>'
         + '<p class="verdict-line">Ваша сила — <strong>' + STRENGTH_TITLES[result.strongest].toLowerCase() + '</strong>. Точка роста — ' + ATTENTION_TITLES[result.attention].toLowerCase() + '.</p>'
         + '<div class="ri-item ri-strong"><p class="ri-label" style="color:var(--mint)">что делаете первым</p><h3>' + STRENGTH_TITLES[result.strongest] + '</h3><p class="ri-text">' + escapeHtml(STRENGTH_DESCRIPTIONS[result.strongest]) + '</p></div>'
         + '<div class="ri-item ri-second"><p class="ri-label" style="color:var(--blue)">вторая опора</p><h3>' + STRENGTH_TITLES[result.second] + '</h3><p class="ri-text">' + escapeHtml(STRENGTH_DESCRIPTIONS[result.second]) + '</p></div>'
