@@ -1419,7 +1419,7 @@ function html() {
 const resultsLogPath = path.join(root, "data", "results.jsonl");
 
 const server = http.createServer((req, res) => {
-  if ((req.url.startsWith("/authors/") || req.url === "/favicon.svg" || req.url === "/favicon.ico") && serveAsset(req, res)) return;
+  if ((req.url.startsWith("/authors/") || req.url.startsWith("/archetype-") || req.url === "/favicon.svg" || req.url === "/favicon.ico") && serveAsset(req, res)) return;
   if (req.method === "POST" && req.url === "/api/submit-result") {
     let body = "";
     req.on("data", chunk => { body += chunk; if (body.length > 200000) req.destroy(); });
