@@ -724,6 +724,12 @@ function html() {
     .archetype-meta-item { display: flex; gap: 10px; font-size: 14px; line-height: 1.5; }
     .archetype-meta-label { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; font-weight: 600; white-space: nowrap; padding-top: 2px; min-width: 70px; }
     @media (max-width: 700px) { .archetype-hero { grid-template-columns: 1fr; } .archetype-img-wrap { min-height: 240px; } .archetype-hero-text { padding: 24px; } }
+    .archetype2-block { display: grid; grid-template-columns: 140px 1fr; gap: 24px; align-items: center; margin-bottom: 40px; background: var(--panel); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
+    .archetype2-img-wrap { background: rgba(240,237,232,.04); display: flex; align-items: flex-end; justify-content: center; min-height: 180px; padding-top: 12px; }
+    .archetype2-img { width: 100%; max-width: 120px; display: block; object-fit: contain; }
+    .archetype2-text { padding: 24px 24px 24px 0; }
+    .archetype2-name { font-size: clamp(22px,2.5vw,30px); font-weight: 300; margin: 0 0 6px; }
+    @media (max-width: 600px) { .archetype2-block { grid-template-columns: 100px 1fr; } .archetype2-text { padding: 16px 16px 16px 0; } }
     .strategy-block { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 28px; margin-bottom: 40px; }
     .strategy-pattern { font-size: 14px; line-height: 1.65; color: var(--muted); margin: 0 0 12px; }
     .strategy-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
@@ -992,7 +998,7 @@ function html() {
     const SCALE_HOWTO = ${JSON.stringify(scaleHowTo)};
     const SCALE_LEVEL_TEXTS = ${JSON.stringify(scaleLevelTexts)};
     const ARCHETYPES = ${JSON.stringify(archetypes)};
-    function getArchetype(n) {
+    function getArchetypes(n) {
       const scores = {
         director: n.adultResponsibility * 1.5 + n.boundariesConsistency * 1 + (100 - n.emotionalContact) * 2 + (100 - n.conflictTolerance) * 1,
         anchor:   n.adultResponsibility * 2   + n.boundariesConsistency * 2 + n.emotionalContact * 0.5 + (100 - n.flexibility) * 0.5,
@@ -1000,7 +1006,11 @@ function html() {
         guardian: n.emotionalContact * 1.5    + n.adultResponsibility * 1    + (100 - n.autonomySupport) * 2 + (100 - n.difficultyVsUnsafety) * 1,
         partner:  n.emotionalContact * 2      + n.flexibility * 1            + (100 - n.adultResponsibility) * 2 + (100 - n.boundariesConsistency) * 1.5,
       };
-      return Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+      const ranked = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+      const first = ranked[0], second = ranked[1];
+      const gap = first[1] - second[1];
+      const threshold = first[1] * 0.15; // второй архетип показываем если отстаёт менее чем на 15%
+      return { primary: first[0], secondary: gap < threshold ? second[0] : null };
     }
     const REACTION_QUESTIONS = ${JSON.stringify(reactionQuestions)};
     const LEARNING_MATERIALS = ${JSON.stringify(learningMaterials)};
@@ -1181,8 +1191,9 @@ function html() {
         attention: "conflictTolerance"
       } : JSON.parse(localStorage.getItem(RESULT_KEY) || "null");
       if (!result) return '<div class="card question"><h2>Результата пока нет</h2><p>Сначала пройдите тест. Ответы сохранятся локально в браузере.</p><button class="button" data-start>Начать тест</button></div>';
-      const archetypeKey = getArchetype(result.normalized);
-      const archetype = ARCHETYPES[archetypeKey];
+      const archetypeKeys = getArchetypes(result.normalized);
+      const archetype = ARCHETYPES[archetypeKeys.primary];
+      const archetype2 = archetypeKeys.secondary ? ARCHETYPES[archetypeKeys.secondary] : null;
       const experiment = REACTION_BY_SCALE[result.attention] || REACTION_QUESTIONS[0];
       const materials = LEARNING_MATERIALS.filter(item => item.scaleKeys?.includes(result.attention) || item.scaleKeys?.includes(result.strongest) || item.scaleKeys?.includes(result.second)).slice(0, 4);
       const materialRows = materials.map(item => '<article class="row"><p class="fine">' + escapeHtml(item.format) + '</p><h3>' + escapeHtml(item.title) + '</h3><p class="fine">' + escapeHtml(item.author) + '</p><p>' + escapeHtml(item.why) + '</p>' + (item.href ? '<a class="pill" href="' + escapeHtml(item.href) + '" target="_blank" rel="noreferrer">Открыть</a>' : '') + '</article>').join("");
@@ -1249,7 +1260,15 @@ function html() {
         + '</div>'
         + '<div class="actions" style="margin-top:24px"><button class="button secondary" data-start>Пройти заново</button></div>'
         + '</div></div>';
-      return archetypeHero
+      const archetype2Hero = archetype2 ? '<div class="archetype2-block">'
+        + '<div class="archetype2-img-wrap"><img src="' + archetype2.image + '" alt="' + escapeHtml(archetype2.name) + '" class="archetype2-img" /></div>'
+        + '<div class="archetype2-text">'
+        + '<p class="kicker" style="color:var(--blue);margin-bottom:8px">второй ведущий архетип</p>'
+        + '<h2 class="archetype2-name">' + escapeHtml(archetype2.name) + '</h2>'
+        + '<p class="archetype-tagline">' + escapeHtml(archetype2.tagline) + '</p>'
+        + '<p style="font-size:14px;line-height:1.65;color:var(--muted);margin:0">' + escapeHtml(archetype2.relief) + '</p>'
+        + '</div></div>' : '';
+      return archetypeHero + archetype2Hero
         + '<div class="result-top">'
         + '<div class="result-radar-col"><div class="result-radar-wrap">' + radarSVG + '</div>'
         + '<p class="fine" style="text-align:center;margin-top:10px;color:rgba(240,237,232,.28);letter-spacing:.06em;text-transform:uppercase;font-size:10px">карта реакций</p></div>'
