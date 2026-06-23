@@ -20,9 +20,12 @@ async function appendToSheet(row) {
   const email = process.env.GOOGLE_CLIENT_EMAIL;
   const key = process.env.GOOGLE_PRIVATE_KEY;
   const sheetId = process.env.GOOGLE_SHEET_ID;
-  if (!email || !key || !sheetId) return;
+  if (!email || !key || !sheetId) {
+    console.error("Sheets: missing env vars — email:", !!email, "key:", !!key, "sheetId:", !!sheetId);
+    return;
+  }
+  console.log("Sheets: starting append, sheetId=", sheetId);
 
-  // JWT for Google API
   const header = Buffer.from(JSON.stringify({ alg: "RS256", typ: "JWT" })).toString("base64url");
   const now = Math.floor(Date.now() / 1e3);
   const claims = Buffer.from(JSON.stringify({
@@ -40,12 +43,23 @@ async function appendToSheet(row) {
     method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${jwt}`
   });
-  const { access_token } = await tokenRes.json();
+  const tokenJson = await tokenRes.json();
+  if (!tokenJson.access_token) {
+    console.error("Sheets: failed to get token:", JSON.stringify(tokenJson));
+    return;
+  }
+  console.log("Sheets: got token, appending row...");
 
-  await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A1:append?valueInputOption=USER_ENTERED`, {
-    method: "POST", headers: { Authorization: `Bearer ${access_token}`, "Content-Type": "application/json" },
+  const appendRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A1:append?valueInputOption=USER_ENTERED`, {
+    method: "POST", headers: { Authorization: `Bearer ${tokenJson.access_token}`, "Content-Type": "application/json" },
     body: JSON.stringify({ values: [row] })
   });
+  const appendJson = await appendRes.json();
+  if (!appendRes.ok) {
+    console.error("Sheets: append failed:", JSON.stringify(appendJson));
+  } else {
+    console.log("Sheets: row appended successfully");
+  }
 }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -1450,16 +1464,26 @@ const server = http.createServer((req, res) => {
         fs.appendFileSync(resultsLogPath, JSON.stringify(entry) + "\n", "utf-8");
         // Async write to Google Sheets (don't block response)
         if (entry.type === "result") {
-        const r = entry.result || {};
-        const n = r.normalized || {};
-        const row = [
-          new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" }),
-          r.strongest || "", r.second || "", r.attention || "",
-          n.adultResponsibility || "", n.emotionalContact || "", n.boundariesConsistency || "",
-          n.autonomySupport || "", n.conflictTolerance || "", n.flexibility || "",
-          n.difficultyVsUnsafety || ""
-        ];
-        appendToSheet(row).catch(e => console.error("Sheets error:", e.message));
+          console.log("Sheets: result entry received, sending to sheets...");
+          const r = entry.result || {};
+          const n = r.normalized || {};
+          const archetypeScores = {
+            director: (n.adultResponsibility||0)*1.5 + (n.boundariesConsistency||0)*1 + (100-(n.emotionalContact||0))*2 + (100-(n.conflictTolerance||0))*1,
+            anchor:   (n.adultResponsibility||0)*2   + (n.boundariesConsistency||0)*2 + (n.emotionalContact||0)*0.5 + (100-(n.flexibility||0))*0.5,
+            mentor:   (n.autonomySupport||0)*2        + (n.difficultyVsUnsafety||0)*2  + (n.flexibility||0)*1,
+            guardian: (n.emotionalContact||0)*1.5    + (n.adultResponsibility||0)*1    + (100-(n.autonomySupport||0))*2 + (100-(n.difficultyVsUnsafety||0))*1,
+            partner:  (n.emotionalContact||0)*2      + (n.flexibility||0)*1            + (100-(n.adultResponsibility||0))*2 + (100-(n.boundariesConsistency||0))*1.5,
+          };
+          const archetypeKey = Object.entries(archetypeScores).sort((a,b)=>b[1]-a[1])[0][0];
+          const row = [
+            new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" }),
+            archetypeKey,
+            r.strongest || "", r.second || "", r.attention || "",
+            n.adultResponsibility || "", n.emotionalContact || "", n.boundariesConsistency || "",
+            n.autonomySupport || "", n.conflictTolerance || "", n.flexibility || "",
+            n.difficultyVsUnsafety || ""
+          ];
+          appendToSheet(row).catch(e => console.error("Sheets error:", e.message));
         }
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ ok: true }));
