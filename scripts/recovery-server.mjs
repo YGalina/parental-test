@@ -1127,9 +1127,7 @@ function html() {
 
     function shell(content) {
       const now = new Date();
-      const msk = now.toLocaleTimeString("ru-RU", {timeZone:"Europe/Moscow", hour:"2-digit", minute:"2-digit"});
-      const spb = now.toLocaleTimeString("ru-RU", {timeZone:"Europe/Moscow", hour:"2-digit", minute:"2-digit"});
-      return '<header class="top"><a class="brand" href="/" data-link><span>Какой я родитель</span><small>тест · родители детей 6–17 лет</small></a><div class="header-meta">Разработан с психологом · экспериментальная методика</div><div style="display:flex;align-items:center;gap:12px"><div class="header-clock" id="hclock">МСК ' + msk + '</div><nav class="nav"><a href="/#methodology" data-link>Методика</a><a href="/#about" data-link>Авторы</a><a class="primary" href="/#test" data-link>Пройти тест →</a></nav></div></header><main style="padding-top:80px">' + content + '</main><nav class="bottom-nav"><a href="/#why" data-link>Зачем</a><a href="/#methodology" data-link>Методика</a><a href="/#about" data-link>Авторы</a><a href="/#test" data-link class="active">Пройти тест</a></nav>';
+      return '<header class="top"><a class="brand" href="/" data-link><span>Какой я родитель</span><small>тест · родители детей 6–17 лет</small></a><div class="header-meta">Разработан с психологом · экспериментальная методика</div><nav class="nav"><a href="/#methodology" data-link>Методика</a><a href="/#about" data-link>Авторы</a><a class="primary" href="/#test" data-link>Пройти тест →</a></nav></header><main style="padding-top:80px">' + content + '</main><nav class="bottom-nav"><a href="/#why" data-link>Зачем</a><a href="/#methodology" data-link>Методика</a><a href="/#about" data-link>Авторы</a><a href="/#test" data-link class="active">Пройти тест</a></nav>';
     }
 
     function home() {
@@ -1571,14 +1569,6 @@ function html() {
     }
     initReveal();
 
-    // ── Live clock ─────────────────────────────────────────
-    function updateClock() {
-      const el = document.getElementById("hclock");
-      if (!el) return;
-      const t = new Date().toLocaleTimeString("ru-RU", {timeZone:"Europe/Moscow", hour:"2-digit", minute:"2-digit"});
-      el.textContent = "МСК " + t;
-    }
-    setInterval(updateClock, 10000);
   </script>
 </body>
 </html>`;
