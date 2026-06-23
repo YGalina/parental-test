@@ -416,8 +416,7 @@ function html() {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Родительская позиция — тест на автоматическую реакцию</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="icon" href="/favicon.svg" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230C0906'/%3E%3Ccircle cx='22' cy='16' r='7' fill='%23f03eb2'/%3E%3Cpath d='M8 46c0-8 6-14 14-14s14 6 14 14' fill='%23f03eb2'/%3E%3Ccircle cx='45' cy='22' r='5' fill='%237DDBB8'/%3E%3Cpath d='M34 46c0-6 5-10 11-10s11 4 11 10' fill='%237DDBB8'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
