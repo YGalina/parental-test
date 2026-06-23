@@ -225,6 +225,15 @@ const archetypes = {
     strength: 'Вы в контакте с ребёнком. Ему с вами безопасно и тепло.',
     growth: 'Быть взрослым в отношениях — удерживать границу, даже когда это некомфортно.',
   },
+  peacemaker: {
+    id: 'peacemaker',
+    name: 'Миротворец',
+    image: '/archetype-peacemaker.png',
+    tagline: 'Родитель, для которого ссора — невыносима',
+    relief: 'Если вы Миротворец — вы не слабый и не "без характера". У вас огромная чувствительность: вы первым замечаете, когда ребёнку плохо, и не можете оставить его в этом. Но есть ловушка: когда вы уступаете, чтобы прекратить конфликт, ребёнок учится, что давление работает. Вам не нужно становиться жёстким. Нужна одна вещь — досидеть в его недовольстве на 30 секунд дольше, чем хочется. Граница не разрушает контакт. Её отсутствие — разрушает.',
+    strength: 'Вы тонко чувствуете состояние ребёнка и цените тёплые отношения выше победы в споре.',
+    growth: 'Выдерживать недовольство ребёнка, не отменяя договорённость ради тишины.',
+  },
 };
 
 const scaleHowTo = {
@@ -1052,6 +1061,7 @@ function html() {
         mentor:   d('autonomySupport')*2        + d('difficultyVsUnsafety')*2  + d('flexibility')*1,
         guardian: d('emotionalContact')*1.5    + d('adultResponsibility')*1    + (-d('autonomySupport'))*2 + (-d('difficultyVsUnsafety'))*1,
         partner:  d('emotionalContact')*2      + d('flexibility')*1            + (-d('adultResponsibility'))*2 + (-d('boundariesConsistency'))*1.5,
+        peacemaker: (-d('conflictTolerance'))*2.5 + (-d('boundariesConsistency'))*1.5 + d('emotionalContact')*1.5 + (-d('adultResponsibility'))*0.5,
       };
       const ranked = Object.entries(scores).sort((a, b) => b[1] - a[1]);
       const first = ranked[0], second = ranked[1];
@@ -1523,6 +1533,7 @@ const server = http.createServer((req, res) => {
             mentor:   sd('autonomySupport')*2        + sd('difficultyVsUnsafety')*2  + sd('flexibility')*1,
             guardian: sd('emotionalContact')*1.5    + sd('adultResponsibility')*1    + (-sd('autonomySupport'))*2 + (-sd('difficultyVsUnsafety'))*1,
             partner:  sd('emotionalContact')*2      + sd('flexibility')*1            + (-sd('adultResponsibility'))*2 + (-sd('boundariesConsistency'))*1.5,
+            peacemaker: (-sd('conflictTolerance'))*2.5 + (-sd('boundariesConsistency'))*1.5 + sd('emotionalContact')*1.5 + (-sd('adultResponsibility'))*0.5,
           };
           const archetypeKey = Object.entries(archetypeScores).sort((a,b)=>b[1]-a[1])[0][0];
           const row = [
