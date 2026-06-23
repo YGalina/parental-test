@@ -1618,7 +1618,8 @@ const server = http.createServer((req, res) => {
             r.strongest || "", r.second || "", r.attention || "",
             n.adultResponsibility || "", n.emotionalContact || "", n.boundariesConsistency || "",
             n.autonomySupport || "", n.conflictTolerance || "", n.flexibility || "",
-            n.difficultyVsUnsafety || ""
+            n.difficultyVsUnsafety || "",
+            "сайт"
           ];
           appendToSheet(row).catch(e => console.error("Sheets error:", e.message));
 
@@ -1658,3 +1659,8 @@ const server = http.createServer((req, res) => {
 server.listen(port, () => {
   console.log(`Recovery server ready: http://localhost:${port}`);
 });
+
+// Telegram-бот (воронка 1) — в том же процессе
+import("./telegram-bot.mjs").then(({ startTelegramBot }) => {
+  startTelegramBot({ appendToSheet });
+}).catch(e => console.error("Telegram bot failed to start:", e.message));
