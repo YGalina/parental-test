@@ -1013,18 +1013,19 @@ function html() {
     const SCALE_LEVEL_TEXTS = ${JSON.stringify(scaleLevelTexts)};
     const ARCHETYPES = ${JSON.stringify(archetypes)};
     function getArchetypes(n) {
+      const d = k => (n[k] || 0) - 50; // deviation from neutral
       const scores = {
-        director: n.adultResponsibility * 1.5 + n.boundariesConsistency * 1 + (100 - n.emotionalContact) * 2 + (100 - n.conflictTolerance) * 1,
-        anchor:   n.adultResponsibility * 2   + n.boundariesConsistency * 2 + n.emotionalContact * 0.5 + (100 - n.flexibility) * 0.5,
-        mentor:   n.autonomySupport * 2        + n.difficultyVsUnsafety * 2  + n.flexibility * 1,
-        guardian: n.emotionalContact * 1.5    + n.adultResponsibility * 1    + (100 - n.autonomySupport) * 2 + (100 - n.difficultyVsUnsafety) * 1,
-        partner:  n.emotionalContact * 2      + n.flexibility * 1            + (100 - n.adultResponsibility) * 2 + (100 - n.boundariesConsistency) * 1.5,
+        director: d('adultResponsibility')*1.5 + d('boundariesConsistency')*1 + (-d('emotionalContact'))*2 + (-d('conflictTolerance'))*1,
+        anchor:   d('adultResponsibility')*2   + d('boundariesConsistency')*2 + d('emotionalContact')*0.5 + (-d('flexibility'))*0.5,
+        mentor:   d('autonomySupport')*2        + d('difficultyVsUnsafety')*2  + d('flexibility')*1,
+        guardian: d('emotionalContact')*1.5    + d('adultResponsibility')*1    + (-d('autonomySupport'))*2 + (-d('difficultyVsUnsafety'))*1,
+        partner:  d('emotionalContact')*2      + d('flexibility')*1            + (-d('adultResponsibility'))*2 + (-d('boundariesConsistency'))*1.5,
       };
       const ranked = Object.entries(scores).sort((a, b) => b[1] - a[1]);
       const first = ranked[0], second = ranked[1];
       const gap = first[1] - second[1];
-      const threshold = first[1] * 0.15; // второй архетип показываем если отстаёт менее чем на 15%
-      return { primary: first[0], secondary: gap < threshold ? second[0] : null };
+      // второй архетип показываем если отстаёт менее чем на 20 пунктов (из ~250 max)
+      return { primary: first[0], secondary: (gap < 20 && second[1] > 0) ? second[0] : null };
     }
     const REACTION_QUESTIONS = ${JSON.stringify(reactionQuestions)};
     const LEARNING_MATERIALS = ${JSON.stringify(learningMaterials)};
@@ -1467,12 +1468,13 @@ const server = http.createServer((req, res) => {
           console.log("Sheets: result entry received, sending to sheets...");
           const r = entry.result || {};
           const n = r.normalized || {};
+          const sd = k => (n[k]||0) - 50;
           const archetypeScores = {
-            director: (n.adultResponsibility||0)*1.5 + (n.boundariesConsistency||0)*1 + (100-(n.emotionalContact||0))*2 + (100-(n.conflictTolerance||0))*1,
-            anchor:   (n.adultResponsibility||0)*2   + (n.boundariesConsistency||0)*2 + (n.emotionalContact||0)*0.5 + (100-(n.flexibility||0))*0.5,
-            mentor:   (n.autonomySupport||0)*2        + (n.difficultyVsUnsafety||0)*2  + (n.flexibility||0)*1,
-            guardian: (n.emotionalContact||0)*1.5    + (n.adultResponsibility||0)*1    + (100-(n.autonomySupport||0))*2 + (100-(n.difficultyVsUnsafety||0))*1,
-            partner:  (n.emotionalContact||0)*2      + (n.flexibility||0)*1            + (100-(n.adultResponsibility||0))*2 + (100-(n.boundariesConsistency||0))*1.5,
+            director: sd('adultResponsibility')*1.5 + sd('boundariesConsistency')*1 + (-sd('emotionalContact'))*2 + (-sd('conflictTolerance'))*1,
+            anchor:   sd('adultResponsibility')*2   + sd('boundariesConsistency')*2 + sd('emotionalContact')*0.5 + (-sd('flexibility'))*0.5,
+            mentor:   sd('autonomySupport')*2        + sd('difficultyVsUnsafety')*2  + sd('flexibility')*1,
+            guardian: sd('emotionalContact')*1.5    + sd('adultResponsibility')*1    + (-sd('autonomySupport'))*2 + (-sd('difficultyVsUnsafety'))*1,
+            partner:  sd('emotionalContact')*2      + sd('flexibility')*1            + (-sd('adultResponsibility'))*2 + (-sd('boundariesConsistency'))*1.5,
           };
           const archetypeKey = Object.entries(archetypeScores).sort((a,b)=>b[1]-a[1])[0][0];
           const row = [
