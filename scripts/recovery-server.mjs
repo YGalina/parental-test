@@ -18,7 +18,7 @@ try {
 
 async function appendToSheet(row) {
   const email = process.env.GOOGLE_CLIENT_EMAIL;
-  const key = process.env.GOOGLE_PRIVATE_KEY;
+  const key = (process.env.GOOGLE_PRIVATE_KEY || "").replace(/\\n/g, "\n");
   const sheetId = process.env.GOOGLE_SHEET_ID;
   if (!email || !key || !sheetId) {
     console.error("Sheets: missing env vars — email:", !!email, "key:", !!key, "sheetId:", !!sheetId);
