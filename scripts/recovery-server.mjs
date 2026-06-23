@@ -399,7 +399,7 @@ function serveAsset(req, res) {
   const filePath = path.join(root, "public", safePath.replace(/^\/+/, ""));
   if (!filePath.startsWith(path.join(root, "public")) || !fs.existsSync(filePath)) return false;
   const ext = path.extname(filePath).toLowerCase();
-  const type = ext === ".png" ? "image/png" : ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" : "application/octet-stream";
+  const type = ext === ".png" ? "image/png" : ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" : ext === ".svg" ? "image/svg+xml" : "application/octet-stream";
   res.writeHead(200, { "Content-Type": type, "Cache-Control": "no-store" });
   if (req.method === "HEAD") {
     res.end();
