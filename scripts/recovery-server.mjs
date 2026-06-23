@@ -970,12 +970,12 @@ function html() {
     .page-input { border: 1px solid var(--line); background: transparent; color: var(--text); border-radius: 12px; padding: 10px 14px; font: inherit; }
     .page-input:focus { outline: none; border-color: rgba(240,237,232,.3); }
     .archetype-showcase { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 0 clamp(20px,5vw,80px); }
-    .arch-card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 18px; text-align: center; transition: border-color .25s, transform .25s; }
+    .arch-card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 14px; text-align: center; transition: border-color .25s, transform .25s; }
     .arch-card:hover { border-color: rgba(240,237,232,.28); transform: translateY(-3px); }
-    .arch-card-img { background: rgba(240,237,232,.04); border-radius: 12px; margin-bottom: 14px; aspect-ratio: 3 / 4; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; }
-    .arch-card-img img { width: 100%; max-width: 185px; object-fit: contain; display: block; }
-    .arch-card h3 { font-size: 19px; font-weight: 400; margin: 0 0 6px; }
-    .arch-card p { font-size: 13px; color: var(--muted); line-height: 1.45; margin: 0; }
+    .arch-card-img { background: #f3f1ec; border-radius: 12px; margin-bottom: 12px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .arch-card-img img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .arch-card h3 { font-size: 18px; font-weight: 400; margin: 0 0 4px; }
+    .arch-card p { font-size: 13px; color: var(--muted); line-height: 1.4; margin: 0; }
     @media (max-width: 760px) { .archetype-showcase { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 460px) { .archetype-showcase { grid-template-columns: 1fr; } }
     textarea { width: 100%; min-height: 140px; resize: vertical; border: 1px solid var(--line); border-radius: 14px; background: transparent; color: var(--text); padding: 16px 20px; font: inherit; line-height: 1.6; transition: border-color .2s; }
