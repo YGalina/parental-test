@@ -1117,11 +1117,13 @@ function html() {
     }
 
     function navigate(pathname) {
+      _navigating = true;
       history.pushState(null, "", pathname);
-      render();
+      render(new URL(pathname, location.href).hash);
+      _navigating = false;
     }
 
-    window.addEventListener("popstate", render);
+    window.addEventListener("popstate", () => { _navigating = false; render(); });
 
     function shell(content) {
       const now = new Date();
@@ -1439,11 +1441,12 @@ function html() {
       return String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char]));
     }
 
-    function render() {
+    let _navigating = false;
+    function render(scrollToHash) {
       const path = window.location.pathname;
       document.getElementById("app").innerHTML = home();
-  const hash = window.location.hash || (path.startsWith("/methodology") ? "#methodology" : path.startsWith("/about") ? "#about" : (path.startsWith("/test") || path.startsWith("/result") || path.startsWith("/demo-result")) ? "#test" : "");
-  if (hash) {
+  const hash = scrollToHash || (path.startsWith("/methodology") ? "#methodology" : path.startsWith("/about") ? "#about" : (path.startsWith("/test") || path.startsWith("/result") || path.startsWith("/demo-result")) ? "#test" : "");
+  if (hash && _navigating) {
     const target = document.querySelector(hash);
     if (target) setTimeout(() => target.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
   }
@@ -1527,6 +1530,7 @@ function html() {
       }
     }
 
+    if (window.location.hash) history.replaceState(null, "", window.location.pathname);
     render();
 
     // ── Custom cursor ──────────────────────────────────────
