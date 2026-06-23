@@ -961,6 +961,14 @@ function html() {
     details summary { cursor: pointer; }
     .option:hover { border-color: rgba(240,237,232,.3); color: var(--text); background: rgba(240,237,232,.04); }
     .option.selected { border-color: var(--pink); color: var(--text); background: rgba(255,45,138,.07); }
+    .pgroup { margin-bottom: 22px; }
+    .plabel { font-size: 13px; color: var(--muted); margin-bottom: 10px; letter-spacing: .02em; }
+    .pchips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pchip { border: 1px solid var(--line); background: transparent; color: var(--muted); border-radius: 99px; padding: 9px 16px; font-size: 14px; cursor: pointer; font-family: inherit; transition: all .2s; }
+    .pchip:hover { border-color: rgba(240,237,232,.3); color: var(--text); }
+    .pchip.sel { border-color: var(--pink); color: var(--text); background: rgba(255,45,138,.1); }
+    .page-input { border: 1px solid var(--line); background: transparent; color: var(--text); border-radius: 12px; padding: 10px 14px; font: inherit; }
+    .page-input:focus { outline: none; border-color: rgba(240,237,232,.3); }
     textarea { width: 100%; min-height: 140px; resize: vertical; border: 1px solid var(--line); border-radius: 14px; background: transparent; color: var(--text); padding: 16px 20px; font: inherit; line-height: 1.6; transition: border-color .2s; }
     textarea:focus { outline: none; border-color: rgba(240,237,232,.3); }
     .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
@@ -1120,11 +1128,30 @@ function html() {
 
     function start() {
       localStorage.removeItem(TEXT_ANALYSIS_KEY);
-      state = { started: true, index: 0, answers: [], startedAt: new Date().toISOString() };
+      state = { started: true, profileStep: true, index: 0, answers: [], profile: {}, startedAt: new Date().toISOString() };
       saveState();
       render();
       const target = document.querySelector("#test");
       if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function profileForm() {
+      const p = state.profile || {};
+      const roleOpts = [['mother','Мать'],['father','Отец'],['grandmother','Бабушка'],['grandfather','Дедушка'],['stepparent','Отчим / Мачеха'],['other','Другой близкий взрослый']];
+      const countOpts = [['1','Один'],['2','Двое'],['3+','Трое и больше']];
+      const genderOpts = [['boy','Мальчик'],['girl','Девочка']];
+      const chip = (group, val, label, sel) => '<button class="pchip' + (sel ? ' sel' : '') + '" data-profile="' + group + '" data-value="' + val + '">' + label + '</button>';
+      const multi = p.children && p.children !== '1';
+      const childWord = multi ? 'одном ребёнке' : 'ребёнке';
+      const note = multi ? '<p class="fine" style="color:var(--yellow);margin:-10px 0 16px;line-height:1.5">Дальше отвечайте, думая об <strong>одном ребёнке</strong> — о том, с кем сейчас сложнее всего. Пол и возраст укажите его.</p>' : '';
+      return '<div class="card question"><h2>Немного о вас</h2><p class="fine" style="margin-bottom:24px">Это поможет точнее собрать результат и сравнить вас с другими родителями. Имена и личные данные не нужны.</p>'
+        + '<div class="pgroup"><p class="plabel">Кто вы ребёнку?</p><div class="pchips">' + roleOpts.map(o => chip('role', o[0], o[1], p.role === o[0])).join('') + '</div></div>'
+        + '<div class="pgroup"><p class="plabel">Сколько у вас детей?</p><div class="pchips">' + countOpts.map(o => chip('children', o[0], o[1], p.children === o[0])).join('') + '</div></div>'
+        + note
+        + '<div class="pgroup"><p class="plabel">Пол ' + childWord + '</p><div class="pchips">' + genderOpts.map(o => chip('gender', o[0], o[1], p.gender === o[0])).join('') + '</div></div>'
+        + '<div class="pgroup"><p class="plabel">Возраст ' + childWord + ' (лет)</p><input type="number" min="1" max="18" data-profile-age value="' + (p.age || '') + '" placeholder="напр. 9" class="page-input" style="width:130px" /></div>'
+        + '<p class="error" id="error"></p>'
+        + '<div class="actions"><button class="button secondary" data-profile-cancel>Назад</button><button class="button" data-profile-submit>Начать тест →</button></div></div>';
     }
 
     function currentAnswer() {
@@ -1135,6 +1162,9 @@ function html() {
     function testSection() {
       if (!state.started) {
         return '<div class="card question"><h2>Перед началом</h2><p>Отвечайте как в жизни, а не как «надо». Не указывайте имена ребенка, школу и другие персональные данные.</p><div class="actions"><button class="button" data-start>Начать тест</button></div></div>';
+      }
+      if (state.profileStep) {
+        return profileForm();
       }
 
       const question = QUESTIONS[state.index];
@@ -1185,7 +1215,7 @@ function html() {
       fetch("/api/submit-result", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "result", result, answers: state.answers })
+        body: JSON.stringify({ type: "result", result, answers: state.answers, profile: state.profile || {} })
       }).then(r => r.json()).then(data => {
         if (data.textAnalysis) {
           localStorage.setItem(TEXT_ANALYSIS_KEY, data.textAnalysis);
@@ -1417,6 +1447,38 @@ function html() {
         navigate(link.getAttribute("href"));
       }));
       document.querySelectorAll("[data-start]").forEach(button => button.addEventListener("click", start));
+      document.querySelectorAll("[data-profile]").forEach(button => button.addEventListener("click", () => {
+        if (!state.profile) state.profile = {};
+        state.profile[button.dataset.profile] = button.dataset.value;
+        saveState();
+        render();
+      }));
+      const ageInput = document.querySelector("[data-profile-age]");
+      if (ageInput) ageInput.addEventListener("input", event => {
+        if (!state.profile) state.profile = {};
+        state.profile.age = event.target.value;
+        saveState();
+      });
+      const profileCancel = document.querySelector("[data-profile-cancel]");
+      if (profileCancel) profileCancel.addEventListener("click", () => {
+        state = { started: false, index: 0, answers: [] };
+        saveState();
+        render();
+      });
+      const profileSubmit = document.querySelector("[data-profile-submit]");
+      if (profileSubmit) profileSubmit.addEventListener("click", () => {
+        const p = state.profile || {};
+        const error = document.getElementById("error");
+        if (!p.role || !p.children || !p.gender || !p.age) {
+          if (error) error.textContent = "Заполните все поля, чтобы продолжить.";
+          return;
+        }
+        state.profileStep = false;
+        saveState();
+        render();
+        const testEl = document.querySelector("#test");
+        if (testEl) setTimeout(() => testEl.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+      });
       document.querySelectorAll("[data-option]").forEach(button => button.addEventListener("click", () => {
         setAnswer(button.dataset.option);
         render();
@@ -1536,8 +1598,12 @@ const server = http.createServer((req, res) => {
             peacemaker: (-sd('conflictTolerance'))*2.5 + (-sd('boundariesConsistency'))*1.5 + sd('emotionalContact')*1.5 + (-sd('adultResponsibility'))*0.5,
           };
           const archetypeKey = Object.entries(archetypeScores).sort((a,b)=>b[1]-a[1])[0][0];
+          const prof = entry.profile || {};
+          const roleLabels = { mother: "Мать", father: "Отец", grandmother: "Бабушка", grandfather: "Дедушка", stepparent: "Отчим/Мачеха", other: "Другой взрослый" };
+          const genderLabels = { boy: "Мальчик", girl: "Девочка" };
           const row = [
             new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" }),
+            roleLabels[prof.role] || "", genderLabels[prof.gender] || "", prof.age || "", prof.children || "",
             archetypeKey,
             r.strongest || "", r.second || "", r.attention || "",
             n.adultResponsibility || "", n.emotionalContact || "", n.boundariesConsistency || "",
