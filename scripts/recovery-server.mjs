@@ -16,6 +16,39 @@ try {
   }
 } catch {}
 
+async function analyzeWithGemini(textAnswers) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey || textAnswers.length === 0) return null;
+
+  const prompt = `Ты — психолог-методолог, анализирующий родительскую коммуникацию.
+Тебе даны дословные реплики, которые родитель написал бы ребёнку в трёх сложных ситуациях.
+
+Реплики:
+${textAnswers.map((t, i) => `${i + 1}. "${t}"`).join("\n")}
+
+Напиши краткий анализ (3–4 предложения) в тёплом, но точном тоне.
+Отметь: какой тон преобладает (объяснение, признание чувств, директива, вопрос, поддержка)?
+Что ребёнок скорее всего услышит в этих словах?
+Одна конкретная рекомендация — что можно попробовать добавить или изменить.
+Пиши на русском, без заголовков, сплошным текстом.`;
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    });
+    const json = await res.json();
+    const text = json?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) { console.error("Gemini: no text in response", JSON.stringify(json)); return null; }
+    console.log("Gemini: analysis complete");
+    return text.trim();
+  } catch (e) {
+    console.error("Gemini error:", e.message);
+    return null;
+  }
+}
+
 async function appendToSheet(row) {
   const email = process.env.GOOGLE_CLIENT_EMAIL;
   const key = (process.env.GOOGLE_PRIVATE_KEY || "").replace(/\\n/g, "\n");
@@ -1041,6 +1074,7 @@ function html() {
     const QUESTIONS = TEST_CASES.flatMap(testCase => testCase.questions.map(question => ({...question, caseId: testCase.id, caseTitle: testCase.title})));
     const SESSION_KEY = "rp-recovery-session-v1";
     const RESULT_KEY = "rp-recovery-result-v1";
+    const TEXT_ANALYSIS_KEY = "rp-text-analysis-v1";
 
     let state = loadState();
 
@@ -1076,6 +1110,7 @@ function html() {
     }
 
     function start() {
+      localStorage.removeItem(TEXT_ANALYSIS_KEY);
       state = { started: true, index: 0, answers: [], startedAt: new Date().toISOString() };
       saveState();
       render();
@@ -1142,6 +1177,12 @@ function html() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: "result", result, answers: state.answers })
+      }).then(r => r.json()).then(data => {
+        if (data.textAnalysis) {
+          localStorage.setItem(TEXT_ANALYSIS_KEY, data.textAnalysis);
+          // Re-render to show analysis if already on result page
+          if (state.index >= QUESTIONS.length) render();
+        }
       }).catch(() => {});
       state.index = QUESTIONS.length; // move past last question so testSection shows resultPage
       saveState();
@@ -1283,7 +1324,15 @@ function html() {
         + '<p class="archetype-tagline">' + escapeHtml(archetype2.tagline) + '</p>'
         + '<p style="font-size:14px;line-height:1.65;color:var(--muted);margin:0">' + escapeHtml(archetype2.relief) + '</p>'
         + '</div></div>' : '';
-      return archetypeHero + archetype2Hero
+      const textAnalysis = demo ? null : localStorage.getItem(TEXT_ANALYSIS_KEY);
+      const textAnalysisBlock = textAnalysis
+        ? '<div class="card" style="margin-bottom:32px;border-color:rgba(125,219,184,.25)">'
+          + '<p class="kicker" style="color:var(--mint);margin-bottom:12px">анализ ваших слов</p>'
+          + '<p style="font-size:14px;line-height:1.75;color:var(--text)">' + escapeHtml(textAnalysis) + '</p>'
+          + '</div>'
+        : '';
+
+      return archetypeHero + archetype2Hero + textAnalysisBlock
         + '<div class="result-top">'
         + '<div class="result-radar-col"><div class="result-radar-wrap">' + radarSVG + '</div>'
         + '<p class="fine" style="text-align:center;margin-top:10px;color:rgba(240,237,232,.28);letter-spacing:.06em;text-transform:uppercase;font-size:10px">карта реакций</p></div>'
@@ -1486,6 +1535,26 @@ const server = http.createServer((req, res) => {
             n.difficultyVsUnsafety || ""
           ];
           appendToSheet(row).catch(e => console.error("Sheets error:", e.message));
+
+          // Analyze open text answers with Gemini
+          const textAnswers = (entry.answers || [])
+            .filter(a => a.textAnswer && a.textAnswer.trim().length >= 10)
+            .map(a => a.textAnswer.trim());
+          if (textAnswers.length > 0) {
+            analyzeWithGemini(textAnswers).then(analysis => {
+              if (analysis) {
+                res.writeHead(200, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ ok: true, textAnalysis: analysis }));
+              } else {
+                res.writeHead(200, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ ok: true }));
+              }
+            }).catch(() => {
+              res.writeHead(200, { "Content-Type": "application/json" });
+              res.end(JSON.stringify({ ok: true }));
+            });
+            return; // response sent async
+          }
         }
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ ok: true }));
