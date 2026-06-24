@@ -470,6 +470,12 @@ function html() {
     .kjr-slider::-webkit-scrollbar { height: 0; }
     .kjr-slider { scrollbar-width: none; }
 
+    /* ── Floating card scroll-reveal ─────────────────── */
+    .kjr-rc { opacity: 0; }
+
+    /* ── New page sections ───────────────────────────── */
+    .kjr-author { display: grid; grid-template-columns: 160px 1fr; gap: clamp(20px,4vw,36px); align-items: center; }
+
     /* ── Layout ────────────────────────────────────────── */
     .wrap { width: min(1240px, calc(100% - 48px)); margin: 0 auto; }
 
@@ -547,8 +553,13 @@ function html() {
       .kjr-card { margin-left: 12px !important; margin-right: 12px !important; }
       .kjr-test-grid { grid-template-columns: 1fr !important; }
       .kjr-test-sidebar { display: none !important; }
+      .kjr-sidebar { display: none !important; }
       .kjr-reviews { grid-template-columns: 1fr !important; }
       .kjr-navlinks { display: none !important; }
+      .kjr-author { grid-template-columns: 1fr !important; text-align:center; justify-items:center; }
+      .kjr-arch-block { grid-template-columns: 1fr !important; }
+      .kjr-radar-block { grid-template-columns: 1fr !important; }
+      .kjr-scales-grid { grid-template-columns: 1fr !important; }
     }
 
     /* ── Result visualization ───────────────────────────── */
@@ -1124,7 +1135,7 @@ function html() {
         + aboutPage()
 
         // TEST section
-        + '<section id="test" class="article" style="padding:0 clamp(20px,5vw,56px) 60px">' + testSection() + '</section>'
+        + '<section id="test" style="padding:0 clamp(16px,4vw,40px)">' + testSection() + '</section>'
       );
     }
 
@@ -1142,18 +1153,27 @@ function html() {
       const roleOpts = [['mother','Мать'],['father','Отец'],['grandmother','Бабушка'],['grandfather','Дедушка'],['stepparent','Отчим / Мачеха'],['other','Другой близкий взрослый']];
       const countOpts = [['1','Один'],['2','Двое'],['3+','Трое и больше']];
       const genderOpts = [['boy','Мальчик'],['girl','Девочка']];
-      const chip = (group, val, label, sel) => '<button class="pchip' + (sel ? ' sel' : '') + '" data-profile="' + group + '" data-value="' + val + '">' + label + '</button>';
+      const chip = (group, val, label, sel) => '<button style="font-family:inherit;font-size:14px;font-weight:' + (sel?'700':'500') + ';padding:9px 18px;border-radius:10px;border:1.5px solid ' + (sel?'#6366f1':'rgba(26,24,48,0.15)') + ';background:' + (sel?'rgba(99,102,241,0.10)':'transparent') + ';color:' + (sel?'#6366f1':'rgba(26,24,48,0.75)') + ';cursor:pointer;transition:all 0.2s" data-profile="' + group + '" data-value="' + val + '">' + label + '</button>';
       const multi = p.children && p.children !== '1';
       const childWord = multi ? 'одном ребёнке' : 'ребёнке';
-      const note = multi ? '<p class="fine" style="color:var(--yellow);margin:-10px 0 16px;line-height:1.5">Дальше отвечайте, думая об <strong>одном ребёнке</strong> — о том, с кем сейчас сложнее всего. Пол и возраст укажите его.</p>' : '';
-      return '<div class="card question"><h2>Немного о вас</h2><p class="fine" style="margin-bottom:24px">Это поможет точнее собрать результат и сравнить вас с другими родителями. Имена и личные данные не нужны.</p>'
-        + '<div class="pgroup"><p class="plabel">Кто вы ребёнку?</p><div class="pchips">' + roleOpts.map(o => chip('role', o[0], o[1], p.role === o[0])).join('') + '</div></div>'
-        + '<div class="pgroup"><p class="plabel">Сколько у вас детей?</p><div class="pchips">' + countOpts.map(o => chip('children', o[0], o[1], p.children === o[0])).join('') + '</div></div>'
+      const note = multi ? '<p style="font-size:13px;color:#e85f7a;margin:-4px 0 4px;line-height:1.5">Дальше отвечайте, думая об <strong>одном ребёнке</strong> — о том, с кем сейчас сложнее всего.</p>' : '';
+      return '<section style="background:#f2f1f8;border-radius:26px;padding:clamp(24px,4vw,44px);color:#1a1830;max-width:680px;margin:0 auto">'
+        + '<div style="display:inline-flex;align-items:center;gap:8px;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;color:#6366f1"><span style="width:6px;height:6px;border-radius:99px;background:#fb7185;display:inline-block"></span>Немного о вас</div>'
+        + '<h2 style="margin-top:16px;font-weight:800;font-size:clamp(22px,2.8vw,32px);letter-spacing:-0.02em;line-height:1.18;color:#1a1830">Немного о вас</h2>'
+        + '<p style="margin-top:10px;font-size:14px;line-height:1.6;color:rgba(26,24,48,0.55);margin-bottom:24px">Это поможет точнее собрать результат. Имена и личные данные не нужны.</p>'
+        + '<div style="display:flex;flex-direction:column;gap:20px">'
+        + '<div><p style="font-size:13px;font-weight:600;color:#1a1830;margin-bottom:10px">Кто вы ребёнку?</p><div style="display:flex;flex-wrap:wrap;gap:8px">' + roleOpts.map(o => chip('role', o[0], o[1], p.role === o[0])).join('') + '</div></div>'
+        + '<div><p style="font-size:13px;font-weight:600;color:#1a1830;margin-bottom:10px">Сколько у вас детей?</p><div style="display:flex;flex-wrap:wrap;gap:8px">' + countOpts.map(o => chip('children', o[0], o[1], p.children === o[0])).join('') + '</div></div>'
         + note
-        + '<div class="pgroup"><p class="plabel">Пол ' + childWord + '</p><div class="pchips">' + genderOpts.map(o => chip('gender', o[0], o[1], p.gender === o[0])).join('') + '</div></div>'
-        + '<div class="pgroup"><p class="plabel">Возраст ' + childWord + ' (лет)</p><input type="number" min="1" max="18" data-profile-age value="' + (p.age || '') + '" placeholder="напр. 9" class="page-input" style="width:130px" /></div>'
-        + '<p class="error" id="error"></p>'
-        + '<div class="actions"><button class="button secondary" data-profile-cancel>Назад</button><button class="button" data-profile-submit>Начать тест →</button></div></div>';
+        + '<div><p style="font-size:13px;font-weight:600;color:#1a1830;margin-bottom:10px">Пол ' + childWord + '</p><div style="display:flex;flex-wrap:wrap;gap:8px">' + genderOpts.map(o => chip('gender', o[0], o[1], p.gender === o[0])).join('') + '</div></div>'
+        + '<div><p style="font-size:13px;font-weight:600;color:#1a1830;margin-bottom:10px">Возраст ' + childWord + ' (лет)</p><input type="number" min="1" max="18" data-profile-age value="' + (p.age || '') + '" placeholder="напр. 9" style="width:130px;background:#fff;border:1.5px solid rgba(26,24,48,0.15);border-radius:10px;padding:10px 14px;font-family:inherit;font-size:15px;color:#1a1830;outline:none" /></div>'
+        + '</div>'
+        + '<p style="font-size:13px;color:#e85f7a;margin-top:12px;min-height:20px" id="error"></p>'
+        + '<div style="margin-top:24px;display:flex;align-items:center;gap:12px">'
+        + '<button style="font-family:inherit;font-size:14px;font-weight:600;padding:12px 22px;border-radius:11px;border:1px solid rgba(26,24,48,0.12);background:transparent;color:rgba(26,24,48,0.5);cursor:pointer" data-profile-cancel>← Назад</button>'
+        + '<button style="font-family:inherit;font-size:14px;font-weight:700;padding:12px 26px;border-radius:11px;border:none;background:#6366f1;color:#fff;cursor:pointer;box-shadow:0 0 24px rgba(99,102,241,0.30)" data-profile-submit>Начать тест →</button>'
+        + '</div>'
+        + '</section>';
     }
 
     function currentAnswer() {
@@ -1163,10 +1183,16 @@ function html() {
 
     function testSection() {
       if (!state.started) {
-        return '<div class="card question"><h2>Перед началом</h2><p>Отвечайте как в жизни, а не как «надо». Не указывайте имена ребенка, школу и другие персональные данные.</p><div class="actions"><button class="button" data-start>Начать тест</button></div></div>';
+        return '<div style="max-width:680px;margin:0 auto;padding:clamp(24px,4vw,44px) 0">'
+          + '<section style="background:#f2f1f8;border-radius:26px;padding:clamp(24px,4vw,44px);color:#1a1830">'
+          + '<div style="display:inline-flex;align-items:center;gap:8px;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;color:#6366f1"><span style="width:6px;height:6px;border-radius:99px;background:#fb7185;display:inline-block"></span>Перед началом</div>'
+          + '<h2 style="margin-top:16px;font-weight:800;font-size:clamp(22px,2.8vw,34px);letter-spacing:-0.02em;line-height:1.18;color:#1a1830">Шесть реальных ситуаций</h2>'
+          + '<p style="margin-top:12px;font-size:15px;line-height:1.7;color:rgba(26,24,48,0.65)">Отвечайте как в жизни, а не как «надо». Не указывайте имена ребёнка, школу и другие персональные данные.</p>'
+          + '<div style="margin-top:28px"><button class="button" data-start>Начать тест →</button></div>'
+          + '</section></div>';
       }
       if (state.profileStep) {
-        return profileForm();
+        return '<div style="max-width:1100px;margin:0 auto;padding:clamp(24px,4vw,44px) 0">' + profileForm() + '</div>';
       }
 
       const question = QUESTIONS[state.index];
@@ -1175,11 +1201,67 @@ function html() {
       const answer = currentAnswer();
       const percent = Math.round((state.index / QUESTIONS.length) * 100);
       const caseIndex = TEST_CASES.findIndex(item => item.id === question.caseId);
-      const options = question.type === "open"
-        ? '<textarea data-open placeholder="Напишите первую настоящую фразу ребенку">' + escapeHtml(answer?.textAnswer || "") + '</textarea><p class="fine">' + escapeHtml(question.helper || "") + '</p>'
-        : '<div class="options">' + question.options.map(option => '<button class="option ' + (answer?.selectedOptionId === option.id ? "selected" : "") + '" data-option="' + option.id + '">' + escapeHtml(option.label) + '<br><span class="fine">' + escapeHtml(option.rationale) + '</span></button>').join("") + '</div>';
+      const atStart = state.index === 0;
+      const isLast = state.index === QUESTIONS.length - 1;
 
-      return '<main class="test-shell"><aside class="card side"><div class="pill">Вопрос ' + (state.index + 1) + ' из ' + QUESTIONS.length + '</div><div class="progress" style="--w:' + percent + '%"><span></span></div><div class="case-list">' + TEST_CASES.map((item, index) => '<div class="case-dot ' + (index === caseIndex ? "active" : "") + '">' + (index + 1) + ". " + escapeHtml(item.title) + '</div>').join("") + '</div></aside><section class="card question"><p class="fine">' + escapeHtml(testCase.title) + ', ребенок ' + testCase.childAge + '</p><h2>' + escapeHtml(question.prompt) + '</h2><p class="scenario">' + escapeHtml(testCase.scenario) + '</p>' + options + '<p class="error" id="error"></p><div class="actions"><button class="button secondary" data-back ' + (state.index === 0 ? "disabled" : "") + '>Назад</button><button class="button" data-next>' + (state.index === QUESTIONS.length - 1 ? "Собрать результат" : "Дальше") + '</button></div></section></main>';
+      const sidebarItems = TEST_CASES.map((item, index) => {
+        const isDone = state.answers.some(a => a.caseId === item.id);
+        const isActive = index === caseIndex;
+        return '<div style="display:flex;gap:11px;align-items:center;padding:10px 12px;border-radius:11px;background:' + (isActive ? 'rgba(99,102,241,0.14)' : 'transparent') + ';border:1px solid ' + (isActive ? 'rgba(99,102,241,0.30)' : 'transparent') + '">'
+          + '<span style="flex:0 0 auto;width:18px;height:18px;border-radius:99px;border:1.5px solid ' + (isActive ? '#818cf8' : (isDone ? '#6366f1' : 'rgba(255,255,255,0.25)')) + ';background:' + (isDone ? '#6366f1' : 'transparent') + ';display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#fff">' + (isDone ? '✓' : '') + '</span>'
+          + '<span style="font-size:13px;color:' + (isActive ? '#818cf8' : (isDone ? 'rgba(240,237,248,0.80)' : 'rgba(240,237,248,0.45)')) + ';font-weight:' + (isActive ? '700' : '500') + '">' + escapeHtml(item.title) + '</span>'
+          + '</div>';
+      }).join('');
+
+      const optionsHTML = question.type === 'open'
+        ? '<div style="margin-top:26px">'
+          + '<textarea data-open placeholder="Напишите первую настоящую фразу, которую вы скажете ребёнку…" style="width:100%;min-height:140px;resize:vertical;background:#1e1b2e;color:#f0edf8;border:1.5px solid rgba(255,255,255,0.10);border-radius:14px;padding:16px 18px;font-family:inherit;font-size:15px;line-height:1.6;outline:none">' + escapeHtml(answer?.textAnswer || '') + '</textarea>'
+          + '<p style="margin-top:10px;font-size:12px;color:rgba(26,24,48,0.45)">Нет правильного ответа. Пишите так, как сказали бы на самом деле.</p>'
+          + '</div>'
+        : '<div style="margin-top:26px;display:flex;flex-direction:column;gap:10px">'
+          + question.options.map(option => {
+            const sel = answer?.selectedOptionId === option.id;
+            return '<div style="display:flex;gap:13px;align-items:flex-start;padding:14px 18px;border-radius:13px;cursor:pointer;border:1.5px solid ' + (sel ? '#6366f1' : 'rgba(26,24,48,0.12)') + ';background:' + (sel ? 'rgba(99,102,241,0.08)' : '#fff') + ';color:#1a1830;font-size:15px;line-height:1.45;transition:border-color 0.2s,background 0.2s" data-option="' + option.id + '">'
+              + '<span style="flex:0 0 auto;width:20px;height:20px;border-radius:99px;border:1.5px solid ' + (sel ? '#6366f1' : 'rgba(26,24,48,0.25)') + ';background:' + (sel ? '#6366f1' : 'transparent') + ';display:inline-flex;align-items:center;justify-content:center;margin-top:1px;font-size:11px;color:#fff">' + (sel ? '✓' : '') + '</span>'
+              + '<span style="font-weight:' + (sel ? '600' : '400') + '">' + escapeHtml(option.label) + '</span>'
+              + '</div>';
+          }).join('')
+          + '</div>';
+
+      return '<div style="max-width:1100px;margin:0 auto;padding:clamp(24px,4vw,44px) 0 80px">'
+
+        // PROGRESS
+        + '<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">'
+        + '<div style="font-size:13px;color:rgba(240,237,248,0.50)">Кейс <span style="color:#818cf8;font-weight:700">' + (caseIndex + 1) + '</span> из 6</div>'
+        + '<div style="font-size:13px;color:rgba(240,237,248,0.50)">' + percent + '% пройдено</div>'
+        + '</div>'
+        + '<div style="margin-top:10px;height:6px;border-radius:99px;background:rgba(255,255,255,0.08);overflow:hidden">'
+        + '<div style="height:100%;width:' + percent + '%;background:linear-gradient(90deg,#6366f1,#818cf8);border-radius:99px;transition:width 0.4s ease"></div>'
+        + '</div>'
+
+        // GRID: sidebar + question card
+        + '<div class="kjr-test-grid" style="margin-top:28px;display:grid;grid-template-columns:240px 1fr;gap:20px;align-items:start">'
+
+        // SIDEBAR
+        + '<aside class="kjr-sidebar" style="position:sticky;top:90px;background:#1e1b2e;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:18px">'
+        + '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:rgba(240,237,248,0.40);font-weight:700;padding:0 6px 12px">Ситуации</div>'
+        + '<div style="display:flex;flex-direction:column;gap:4px">' + sidebarItems + '</div>'
+        + '</aside>'
+
+        // QUESTION CARD
+        + '<section style="background:#f2f1f8;border-radius:26px;padding:clamp(24px,4vw,44px);color:#1a1830">'
+        + '<div style="display:inline-flex;align-items:center;gap:8px;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;color:#6366f1"><span style="width:6px;height:6px;border-radius:99px;background:#fb7185;display:inline-block"></span>' + escapeHtml(testCase.title) + ' · ребёнок ' + escapeHtml(testCase.childAge || '') + '</div>'
+        + '<h2 style="margin-top:16px;font-weight:800;font-size:clamp(22px,2.8vw,34px);letter-spacing:-0.02em;line-height:1.18;color:#1a1830">' + escapeHtml(question.prompt) + '</h2>'
+        + '<p style="margin-top:12px;font-size:14px;line-height:1.6;color:rgba(26,24,48,0.55)">' + escapeHtml(testCase.scenario) + '</p>'
+        + optionsHTML
+        + '<p style="font-size:13px;color:#e85f7a;margin-top:12px;min-height:20px" id="error"></p>'
+        + '<div style="margin-top:30px;display:flex;align-items:center;justify-content:space-between;gap:12px">'
+        + '<button data-back ' + (atStart ? 'disabled' : '') + ' style="font-family:inherit;font-size:14px;font-weight:600;padding:12px 22px;border-radius:11px;border:1px solid rgba(26,24,48,0.12);background:transparent;color:' + (atStart ? 'rgba(26,24,48,0.30)' : '#1a1830') + ';cursor:' + (atStart ? 'not-allowed' : 'pointer') + '">← Назад</button>'
+        + '<button data-next style="font-family:inherit;font-size:14px;font-weight:700;padding:12px 26px;border-radius:11px;border:none;background:#6366f1;color:#fff;cursor:pointer;box-shadow:0 0 24px rgba(99,102,241,0.30)">' + (isLast ? 'Узнать результат →' : 'Дальше →') + '</button>'
+        + '</div>'
+        + '</section>'
+
+        + '</div></div>';
     }
 
     function setAnswer(value) {
@@ -1280,151 +1362,291 @@ function html() {
       return "Когда в кейсе появляется новая информация (твист), решение меняется частично: что-то пересматривается, что-то остается прежним. Это рабочий баланс между устойчивостью и гибкостью.";
     }
 
-    function resultPage(demo = false) {
+    function resultPage(demo) {
       const result = demo ? {
         normalized: { adultResponsibility: 74, emotionalContact: 69, boundariesConsistency: 58, autonomySupport: 63, conflictTolerance: 52, flexibility: 71, difficultyVsUnsafety: 76 },
         strongest: "difficultyVsUnsafety",
         second: "adultResponsibility",
         attention: "conflictTolerance"
       } : JSON.parse(localStorage.getItem(RESULT_KEY) || "null");
-      if (!result) return '<div class="card question"><h2>Результата пока нет</h2><p>Сначала пройдите тест. Ответы сохранятся локально в браузере.</p><button class="button" data-start>Начать тест</button></div>';
+      if (!result) return '<div style="max-width:680px;margin:0 auto;padding:40px 0"><section style="background:#f2f1f8;border-radius:26px;padding:40px;color:#1a1830;text-align:center"><h2 style="font-weight:800;font-size:28px;color:#1a1830">Результата пока нет</h2><p style="margin-top:12px;font-size:15px;color:rgba(26,24,48,0.65)">Сначала пройдите тест. Ответы сохранятся в браузере.</p><div style="margin-top:24px"><button class="button" data-start>Начать тест →</button></div></section></div>';
+
       const archetypeKeys = getArchetypes(result.normalized);
       const archetype = ARCHETYPES[archetypeKeys.primary];
       const archetype2 = archetypeKeys.secondary ? ARCHETYPES[archetypeKeys.secondary] : null;
       const experiment = REACTION_BY_SCALE[result.attention] || REACTION_QUESTIONS[0];
-      const materials = LEARNING_MATERIALS.filter(item => item.scaleKeys?.includes(result.attention) || item.scaleKeys?.includes(result.strongest) || item.scaleKeys?.includes(result.second)).slice(0, 4);
-      const materialRows = materials.map(item => '<article class="row"><p class="fine">' + escapeHtml(item.format) + '</p><h3>' + escapeHtml(item.title) + '</h3><p class="fine">' + escapeHtml(item.author) + '</p><p>' + escapeHtml(item.why) + '</p>' + (item.href ? '<a class="pill" href="' + escapeHtml(item.href) + '" target="_blank" rel="noreferrer">Открыть</a>' : '') + '</article>').join("");
-      // ── Radar SVG (pure math, no library) ─────────────────────────────────
-      const RCX = 160, RCY = 160, RR = 112;
+      const textAnalysis = demo ? null : localStorage.getItem(TEXT_ANALYSIS_KEY);
+
+      // ── Radar SVG (indigo style, 360×360) ────────────────────────────────
+      const RCX = 180, RCY = 180, RR = 120;
       const rN = SCALE_KEYS.length;
       const rA = SCALE_KEYS.map((_, i) => Math.PI * 2 * i / rN - Math.PI / 2);
-      const rGrid = [.25,.5,.75,1].map(f => '<polygon points="' + rA.map(a => (RCX+RR*f*Math.cos(a)).toFixed(1)+','+(RCY+RR*f*Math.sin(a)).toFixed(1)).join(' ') + '" fill="none" stroke="rgba(240,237,232,' + (f===1?.14:.065) + ')" stroke-width="1"/>').join('');
-      const rAxes = rA.map(a => '<line x1="'+RCX+'" y1="'+RCY+'" x2="'+(RCX+RR*Math.cos(a)).toFixed(1)+'" y2="'+(RCY+RR*Math.sin(a)).toFixed(1)+'" stroke="rgba(240,237,232,.09)" stroke-width="1"/>').join('');
+      const rGrid = [.25,.5,.75,1].map(f => '<polygon points="' + rA.map(a => (RCX+RR*f*Math.cos(a)).toFixed(1)+','+(RCY+RR*f*Math.sin(a)).toFixed(1)).join(' ') + '" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>').join('');
+      const rAxes = rA.map(a => '<line x1="'+RCX+'" y1="'+RCY+'" x2="'+(RCX+RR*Math.cos(a)).toFixed(1)+'" y2="'+(RCY+RR*Math.sin(a)).toFixed(1)+'" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>').join('');
       const rPts = SCALE_KEYS.map((key,i)=>(RCX+RR*result.normalized[key]/100*Math.cos(rA[i])).toFixed(1)+','+(RCY+RR*result.normalized[key]/100*Math.sin(rA[i])).toFixed(1)).join(' ');
-      const rDots = SCALE_KEYS.map((key,i)=>{const px=(RCX+RR*result.normalized[key]/100*Math.cos(rA[i])).toFixed(1),py=(RCY+RR*result.normalized[key]/100*Math.sin(rA[i])).toFixed(1),c=key===result.attention?'#F5D060':key===result.strongest?'#7DDBB8':'rgba(240,237,232,.7)';return '<circle cx="'+px+'" cy="'+py+'" r="4.5" fill="'+c+'" stroke="#0C0906" stroke-width="2"/>';}).join('');
-      const rSL = {adultResponsibility:'Взросл.',emotionalContact:'Контакт',boundariesConsistency:'Границы',autonomySupport:'Автономия',conflictTolerance:'Конфликт',flexibility:'Гибкость',difficultyVsUnsafety:'Риск/труд.'};
-      const rLabels = SCALE_KEYS.map((key,i)=>{const lx=RCX+(RR+26)*Math.cos(rA[i]),ly=RCY+(RR+26)*Math.sin(rA[i]),anch=lx<RCX-8?'end':lx>RCX+8?'start':'middle',col=key===result.attention?'rgba(245,208,96,.9)':key===result.strongest?'rgba(125,219,184,.9)':'rgba(240,237,232,.42)';return '<text x="'+lx.toFixed(1)+'" y="'+(ly+4).toFixed(1)+'" text-anchor="'+anch+'" fill="'+col+'" font-size="9" font-family="Inter,sans-serif" letter-spacing=".01em">'+rSL[key]+'</text>';}).join('');
-      const radarSVG = '<svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:320px;display:block;margin:0 auto">'+rGrid+rAxes+'<polygon points="'+rPts+'" fill="rgba(125,219,184,.11)" stroke="rgba(125,219,184,.45)" stroke-width="1.5"/>'+rDots+rLabels+'</svg>';
-      // ── Scale bars ───────────────────────────────────────────────────────────
-      const scaleCards = [...SCALE_KEYS].sort((a, b) => result.normalized[b] - result.normalized[a]).map((key, idx) => {
+      const rDots = SCALE_KEYS.map((key,i)=>{const px=(RCX+RR*result.normalized[key]/100*Math.cos(rA[i])).toFixed(1),py=(RCY+RR*result.normalized[key]/100*Math.sin(rA[i])).toFixed(1);return '<circle cx="'+px+'" cy="'+py+'" r="4" fill="#818cf8"/>';}).join('');
+      const rSL = {adultResponsibility:'Взрослость',emotionalContact:'Контакт',boundariesConsistency:'Границы',autonomySupport:'Автономия',conflictTolerance:'Конфликт',flexibility:'Гибкость',difficultyVsUnsafety:'Риск/труд'};
+      const rLabels = SCALE_KEYS.map((key,i)=>{const lx=RCX+(RR+28)*Math.cos(rA[i]),ly=RCY+(RR+28)*Math.sin(rA[i]),anch=lx<RCX-8?'end':lx>RCX+8?'start':'middle';return '<text x="'+lx.toFixed(1)+'" y="'+(ly+4).toFixed(1)+'" text-anchor="'+anch+'" dominant-baseline="middle" fill="rgba(240,237,248,0.65)" font-size="12" font-weight="600" font-family="Inter,sans-serif">'+rSL[key]+'</text>';}).join('');
+      const radarSVG = '<svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:360px;display:block">'+rGrid+rAxes+'<polygon points="'+rPts+'" fill="rgba(99,102,241,0.28)" stroke="#818cf8" stroke-width="2.5" stroke-linejoin="round"/>'+rDots+rLabels+'</svg>';
+
+      // ── Block 1: archetype ─────────────────────────────────────────────────
+      const block1 = '<section class="kjr-rc kjr-arch-block" style="opacity:0;background:#f2f1f8;border-radius:30px;padding:clamp(24px,4vw,44px);color:#1a1830;display:grid;grid-template-columns:280px 1fr;gap:clamp(20px,4vw,40px);align-items:center">'
+        + '<div style="border-radius:22px;overflow:hidden;background:linear-gradient(135deg,#f0eeff,#e8e6ff);aspect-ratio:3/4">'
+        + '<img src="' + escapeHtml(archetype.image) + '" alt="' + escapeHtml(archetype.name) + '" style="width:100%;height:100%;object-fit:cover;object-position:center top" />'
+        + '</div>'
+        + '<div>'
+        + '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;color:#6366f1">' + (demo ? 'Демо · ваш архетип' : 'Ваш архетип') + '</div>'
+        + '<h1 style="margin-top:10px;font-weight:800;font-size:clamp(40px,5vw,68px);letter-spacing:-0.03em;line-height:1.02;color:#1a1830">' + escapeHtml(archetype.name) + '</h1>'
+        + '<p style="margin-top:14px;font-size:18px;line-height:1.55;color:rgba(26,24,48,0.65);max-width:440px">' + escapeHtml(archetype.tagline) + '</p>'
+        + '<div style="margin-top:22px;display:flex;flex-wrap:wrap;gap:10px">'
+        + '<div style="background:rgba(99,102,241,0.10);border:1px solid rgba(99,102,241,0.20);border-radius:14px;padding:12px 16px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;color:#6366f1">Сила</div><div style="margin-top:4px;font-size:14px;font-weight:600;color:#1a1830">' + escapeHtml(archetype.strength) + '</div></div>'
+        + '<div style="background:rgba(251,113,133,0.10);border:1px solid rgba(251,113,133,0.22);border-radius:14px;padding:12px 16px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;color:#fb7185">Зона роста</div><div style="margin-top:4px;font-size:14px;font-weight:600;color:#1a1830">' + escapeHtml(archetype.growth) + '</div></div>'
+        + '</div>'
+        + (archetype2 ? '<div style="margin-top:18px;padding:14px 18px;background:rgba(99,102,241,0.06);border-radius:14px;border-left:3px solid rgba(99,102,241,0.30)"><div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;color:#818cf8">Второй архетип</div><div style="margin-top:4px;font-size:15px;font-weight:700;color:#1a1830">' + escapeHtml(archetype2.name) + '</div><p style="margin-top:4px;font-size:13px;color:rgba(26,24,48,0.6)">' + escapeHtml(archetype2.tagline) + '</p></div>' : '')
+        + '<div style="margin-top:20px"><button class="button secondary" data-start style="border:1px solid rgba(26,24,48,0.15);color:#1a1830">Пройти заново</button></div>'
+        + '</div>'
+        + '</section>';
+
+      // ── Block 2: radar + highlights ────────────────────────────────────────
+      const highlights = [
+        { icon:'↑', kicker:'Ваша сила', title: STRENGTH_TITLES[result.strongest], text: escapeHtml(STRENGTH_DESCRIPTIONS[result.strongest]), iconBg:'rgba(99,102,241,0.15)', iconColor:'#818cf8' },
+        { icon:'•', kicker:'Вторая опора', title: STRENGTH_TITLES[result.second], text: escapeHtml(STRENGTH_DESCRIPTIONS[result.second]), iconBg:'rgba(99,102,241,0.10)', iconColor:'#818cf8' },
+        { icon:'↓', kicker:'Зона внимания', title: ATTENTION_TITLES[result.attention], text: escapeHtml(ATTENTION_DESCRIPTIONS[result.attention]), iconBg:'rgba(251,113,133,0.15)', iconColor:'#fb7185' },
+      ];
+      const block2 = '<section class="kjr-rc kjr-radar-block" style="opacity:0;position:relative;overflow:hidden;background:linear-gradient(135deg,#1a1830 0%,#0e1225 50%,#111827 100%);border-radius:30px;padding:clamp(24px,4vw,44px);display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,4vw,40px);align-items:center">'
+        + '<div style="position:absolute;width:380px;height:380px;top:-120px;left:-80px;background:radial-gradient(circle,rgba(99,102,241,0.16) 0%,transparent 70%);pointer-events:none"></div>'
+        + '<div style="position:relative;display:flex;justify-content:center">' + radarSVG + '</div>'
+        + '<div style="position:relative">'
+        + '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;color:#818cf8">Профиль решений</div>'
+        + '<h2 style="margin-top:10px;font-weight:800;font-size:clamp(22px,2.6vw,32px);letter-spacing:-0.02em;line-height:1.12;color:#f0edf8">7 шкал родительского стиля</h2>'
+        + '<div style="margin-top:22px;display:flex;flex-direction:column;gap:14px">'
+        + highlights.map(h => '<div style="display:flex;gap:14px;align-items:flex-start"><span style="flex:0 0 auto;width:38px;height:38px;border-radius:12px;background:' + h.iconBg + ';color:' + h.iconColor + ';display:inline-flex;align-items:center;justify-content:center;font-size:18px;font-weight:800">' + h.icon + '</span><div><div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;color:' + h.iconColor + '">' + h.kicker + '</div><div style="margin-top:3px;font-size:15px;font-weight:700;color:#f0edf8">' + h.title + '</div><div style="margin-top:3px;font-size:13px;line-height:1.55;color:rgba(240,237,248,0.55)">' + h.text + '</div></div></div>').join('')
+        + '</div>'
+        + (textAnalysis ? '<div style="margin-top:22px;padding:14px 16px;background:rgba(99,102,241,0.08);border-left:3px solid #818cf8;border-radius:0 12px 12px 0"><div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;color:#818cf8;margin-bottom:8px">Анализ ваших слов</div><p style="font-size:13px;line-height:1.65;color:rgba(240,237,248,0.80)">' + escapeHtml(textAnalysis) + '</p></div>' : '')
+        + '</div>'
+        + '</section>';
+
+      // ── Block 3: scales breakdown ──────────────────────────────────────────
+      const scaleItems = [...SCALE_KEYS].sort((a, b) => result.normalized[b] - result.normalized[a]).map((key, idx) => {
         const v = result.normalized[key];
         const howTo = SCALE_HOWTO[key];
-        const isStrongest = key === result.strongest, isAttention = key === result.attention;
-        const tag = isAttention ? '<span style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--yellow);background:rgba(245,208,96,.12);padding:2px 7px;border-radius:99px;margin-left:8px">зона внимания</span>' : isStrongest ? '<span style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mint);background:rgba(125,219,184,.12);padding:2px 7px;border-radius:99px;margin-left:8px">сильная</span>' : '';
-        const isLow = v < 50;
-        const barCol = isAttention ? 'var(--yellow)' : isStrongest ? 'var(--mint)' : isLow ? 'var(--red)' : idx < 3 ? 'var(--accent)' : 'rgba(240,237,232,.2)';
-        const numCol = isAttention ? 'var(--yellow)' : isStrongest ? 'var(--mint)' : isLow ? 'var(--red)' : 'rgba(240,237,232,.65)';
-        const icon = SCALE_ICONS[key] || '';
         const level = v >= 70 ? 'high' : v >= 50 ? 'mid' : 'low';
-        const zoneText = v >= 70 ? 'развита' : v >= 50 ? 'умеренная' : 'зона роста';
-        const zoneBg = v >= 70 ? 'rgba(125,219,184,.13)' : v >= 50 ? 'rgba(82,127,240,.13)' : 'rgba(255,107,107,.13)';
-        const zoneCol = v >= 70 ? 'var(--mint)' : v >= 50 ? 'var(--blue)' : 'var(--red)';
-        const zoneLabel = '<span class="sbar-zone" style="background:' + zoneBg + ';color:' + zoneCol + '">' + zoneText + '</span>';
-        const levelText = (SCALE_LEVEL_TEXTS[key] || {})[level] || '';
-        const art = LEARNING_MATERIALS.find(item => item.scaleKeys?.includes(key));
-        const artHtml = art
-          ? '<div class="sbar-inline-art"><p class="art-meta">' + escapeHtml(art.format) + (art.author ? ' · ' + escapeHtml(art.author) : '') + '</p><h4>' + escapeHtml(art.title) + '</h4><p>' + escapeHtml(art.why) + '</p>' + (art.href ? '<a class="pill" href="' + escapeHtml(art.href) + '" target="_blank" rel="noreferrer" style="font-size:11px">Открыть →</a>' : '') + '</div>'
-          : '';
-        return '<div class="sbar-item">'
-          + '<div class="sbar-head"><div style="display:flex;align-items:center;gap:6px;flex:1;flex-wrap:wrap">' + icon + '<span class="sbar-title">' + SCALE_TITLES[key] + '</span>' + tag + '</div>'
-          + '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span class="sbar-num" style="color:' + numCol + '">' + v + '</span>' + zoneLabel + '</div></div>'
-          + '<div class="sbar-track"><div class="sbar-fill" style="width:' + v + '%;background:' + barCol + '"></div></div>'
-          + (levelText ? '<p class="sbar-level-text">' + escapeHtml(levelText) + '</p>' : '')
-          + '<p class="fine" style="margin:0 0 0;color:rgba(240,237,232,.3);font-size:12px">' + escapeHtml(SCALE_DESCRIPTIONS[key]) + '</p>'
-          + '<div class="sbar-tip"><p class="sbar-tip-label">попробуйте</p><p>' + escapeHtml(howTo.text) + '</p></div>'
-          + artHtml
+        const levelText = (SCALE_LEVEL_TEXTS[key] || {})[level] || SCALE_DESCRIPTIONS[key];
+        const badge = v >= 70 ? 'развита' : v >= 50 ? 'умеренная' : 'зона роста';
+        const badgeBg = v >= 70 ? 'rgba(99,102,241,0.12)' : v >= 50 ? 'rgba(26,24,48,0.06)' : 'rgba(251,113,133,0.12)';
+        const badgeColor = v >= 70 ? '#6366f1' : v >= 50 ? 'rgba(26,24,48,0.55)' : '#e85f7a';
+        const barColor = v >= 70 ? '#6366f1' : v >= 50 ? '#a5a3c4' : '#fb7185';
+        return '<div style="background:#fff;border:1px solid rgba(26,24,48,0.08);border-radius:18px;padding:20px 22px">'
+          + '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">'
+          + '<span style="font-size:16px;font-weight:700;color:#1a1830">' + escapeHtml(SCALE_TITLES[key]) + '</span>'
+          + '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;border-radius:99px;padding:5px 12px;background:' + badgeBg + ';color:' + badgeColor + '">' + badge + '</span>'
+          + '</div>'
+          + '<div style="margin-top:12px;height:8px;border-radius:99px;background:rgba(26,24,48,0.07);overflow:hidden">'
+          + '<div style="height:100%;width:' + v + '%;border-radius:99px;background:' + barColor + '"></div>'
+          + '</div>'
+          + '<p style="margin-top:12px;font-size:14px;line-height:1.6;color:rgba(26,24,48,0.62)">' + escapeHtml(levelText) + '</p>'
+          + '<div onclick="(function(el){var t=el.nextElementSibling;var vis=t.style.display!==\\x27none\\x27&&t.style.display!==\\x27\\x27;t.style.display=vis?\\x27none\\x27:\\x27block\\x27;el.querySelector(\\x27.tip-arr\\x27).style.transform=vis?\\x27rotate(0)\\x27:\\x27rotate(180deg)\\x27})(this)" style="margin-top:12px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;font-weight:700;color:#6366f1">Попробуйте <span class="tip-arr" style="display:inline-block;transition:transform 0.25s ease">▾</span></div>'
+          + '<div style="display:none;margin-top:12px;background:rgba(99,102,241,0.06);border-left:3px solid #6366f1;border-radius:0 12px 12px 0;padding:14px 16px;font-size:14px;line-height:1.6;color:#1a1830">' + escapeHtml(howTo.text) + '</div>'
           + '</div>';
       }).join('');
-      const strategyBlock = '<div class="strategy-block">'
-        + '<p class="kicker" style="color:var(--pink);margin-bottom:14px">стратегия родителя</p>'
-        + '<h2 class="serif" style="font-size:clamp(22px,2.4vw,30px);font-weight:400;margin:0 0 16px;line-height:1.2">Ваш паттерн под давлением</h2>'
-        + '<p class="strategy-pattern">' + escapeHtml(pressurePattern(result.normalized)) + '</p>'
-        + '<p class="strategy-pattern">' + escapeHtml(twistPattern(result.normalized)) + '</p>'
-        + '<div class="strategy-cols">'
-        + '<div class="strategy-col"><span class="strategy-col-label" style="color:var(--mint)">плюсы</span><p>' + escapeHtml(STRENGTH_DESCRIPTIONS[result.strongest]) + ' ' + escapeHtml(STRENGTH_DESCRIPTIONS[result.second]) + '</p></div>'
-        + '<div class="strategy-col"><span class="strategy-col-label" style="color:var(--yellow)">зона роста</span><p>' + escapeHtml(ATTENTION_DESCRIPTIONS[result.attention]) + '</p></div>'
-        + '</div></div>';
-      const archetypeHero = '<div class="archetype-hero">'
-        + '<div class="archetype-img-wrap"><img src="' + archetype.image + '" alt="' + escapeHtml(archetype.name) + '" class="archetype-img" /></div>'
-        + '<div class="archetype-hero-text">'
-        + '<p class="kicker" style="color:var(--pink);margin-bottom:10px">' + (demo ? 'демо · ваш архетип' : 'ваш архетип') + '</p>'
-        + '<h1 class="archetype-name">' + escapeHtml(archetype.name) + '</h1>'
-        + '<p class="archetype-tagline">' + escapeHtml(archetype.tagline) + '</p>'
-        + '<div class="archetype-relief">' + escapeHtml(archetype.relief) + '</div>'
-        + '<div class="archetype-meta">'
-        + '<div class="archetype-meta-item"><span class="archetype-meta-label" style="color:var(--mint)">сила</span><span>' + escapeHtml(archetype.strength) + '</span></div>'
-        + '<div class="archetype-meta-item"><span class="archetype-meta-label" style="color:var(--yellow)">зона роста</span><span>' + escapeHtml(archetype.growth) + '</span></div>'
-        + '</div>'
-        + '<div class="actions" style="margin-top:24px"><button class="button secondary" data-start>Пройти заново</button></div>'
-        + '</div></div>';
-      const archetype2Hero = archetype2 ? '<div class="archetype2-block">'
-        + '<div class="archetype2-img-wrap"><img src="' + archetype2.image + '" alt="' + escapeHtml(archetype2.name) + '" class="archetype2-img" /></div>'
-        + '<div class="archetype2-text">'
-        + '<p class="kicker" style="color:var(--blue);margin-bottom:8px">второй ведущий архетип</p>'
-        + '<h2 class="archetype2-name">' + escapeHtml(archetype2.name) + '</h2>'
-        + '<p class="archetype-tagline">' + escapeHtml(archetype2.tagline) + '</p>'
-        + '<p style="font-size:14px;line-height:1.65;color:var(--muted);margin:0">' + escapeHtml(archetype2.relief) + '</p>'
-        + '</div></div>' : '';
-      const textAnalysis = demo ? null : localStorage.getItem(TEXT_ANALYSIS_KEY);
-      const textAnalysisBlock = textAnalysis
-        ? '<div class="card" style="margin-bottom:32px;border-color:rgba(125,219,184,.25)">'
-          + '<p class="kicker" style="color:var(--mint);margin-bottom:12px">анализ ваших слов</p>'
-          + '<p style="font-size:14px;line-height:1.75;color:var(--text)">' + escapeHtml(textAnalysis) + '</p>'
-          + '</div>'
-        : '';
+      const block3 = '<section class="kjr-rc" style="opacity:0;background:#f2f1f8;border-radius:30px;padding:clamp(24px,4vw,44px);color:#1a1830">'
+        + '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;color:#6366f1">Расшифровка</div>'
+        + '<h2 style="margin-top:10px;font-weight:800;font-size:clamp(22px,2.8vw,34px);letter-spacing:-0.02em;line-height:1.1">Что показывает каждая шкала</h2>'
+        + '<div style="margin-top:28px;display:flex;flex-direction:column;gap:12px">' + scaleItems + '</div>'
+        + '</section>';
 
-      return archetypeHero + archetype2Hero + textAnalysisBlock
-        + '<div class="result-top">'
-        + '<div class="result-radar-col"><div class="result-radar-wrap">' + radarSVG + '</div>'
-        + '<p class="fine" style="text-align:center;margin-top:10px;color:rgba(240,237,232,.28);letter-spacing:.06em;text-transform:uppercase;font-size:10px">карта реакций</p></div>'
-        + '<div class="result-insights">'
-        + '<p class="fine" style="color:var(--muted);margin-bottom:16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase">детальный разбор</p>'
-        + '<p class="verdict-line">Ваша сила — <strong>' + STRENGTH_TITLES[result.strongest].toLowerCase() + '</strong>. Точка роста — ' + ATTENTION_TITLES[result.attention].toLowerCase() + '.</p>'
-        + '<div class="ri-item ri-strong"><p class="ri-label" style="color:var(--mint)">что делаете первым</p><h3>' + STRENGTH_TITLES[result.strongest] + '</h3><p class="ri-text">' + escapeHtml(STRENGTH_DESCRIPTIONS[result.strongest]) + '</p></div>'
-        + '<div class="ri-item ri-second"><p class="ri-label" style="color:var(--blue)">вторая опора</p><h3>' + STRENGTH_TITLES[result.second] + '</h3><p class="ri-text">' + escapeHtml(STRENGTH_DESCRIPTIONS[result.second]) + '</p></div>'
-        + '<div class="ri-item ri-attention"><p class="ri-label" style="color:var(--yellow)">зона внимания</p><h3>' + ATTENTION_TITLES[result.attention] + '</h3><p class="ri-text">' + escapeHtml(ATTENTION_DESCRIPTIONS[result.attention]) + '</p></div>'
-        + '<div class="actions" style="margin-top:28px"><button class="button secondary" data-start>Пройти заново</button><a class="pill" href="#test" data-link>К тесту</a></div>'
-        + '</div></div>'
-        + strategyBlock
-        + '<div class="result-scales-wrap"><p class="kicker" style="margin-bottom:8px;color:var(--muted)">расшифровка по шкалам</p><p style="font-size:13px;color:rgba(240,237,232,.35);margin:0 0 24px;line-height:1.5">Рядом с каждым числом — пометка: <span style="color:var(--mint)">развита</span> (70+), <span style="color:var(--blue)">умеренная</span> (50–69) или <span style="color:var(--red)">зона роста</span> (&lt;50). И статья, если есть.</p><div class="result-scales">' + scaleCards + '</div></div>'
-        + '<section class="card" style="margin-top:32px"><p class="kicker" style="color:var(--yellow)">что делать дальше</p><h2>Три коротких шага после результата</h2><div class="rows"><div class="row"><h3>1. Сразу — возьмите фразу для разговора</h3><p>Она нужна не для идеального воспитания, а чтобы выиграть паузу между автоматической реакцией и следующим действием.</p></div><div class="row"><h3>2. На неделю — один маленький эксперимент</h3><p>При следующем «не хочу» сначала спросите себя: <strong>' + escapeHtml(experiment.title) + '</strong></p><p class="fine">' + escapeHtml(experiment.text) + '</p></div><div class="row"><h3>3. Развивать через практику</h3><p>Материалы к каждой шкале — прямо в расшифровке выше.</p></div></div><p class="fine">Эти шаги — общие практические подсказки, а не индивидуальные рекомендации.</p></section>'
-        + '<details class="card"><summary><h2>Фразы для разговора</h2></summary><p>«Я вижу, что ты сейчас не хочешь. Давай разберемся почему, но договоренность сама по себе не исчезает».</p><p>«Сначала проверим, что произошло, а потом выберем решение, которое не бросает ни тебя, ни правило».</p></details>'
-        + '<details class="card" style="border-color:var(--mint);background:var(--bg)"><summary><h2>Ограничение результата</h2></summary><p>Этот результат отражает ваши решения в шести смоделированных ситуациях. В реальной жизни поведение зависит от возраста ребенка, контекста, усталости, отношений и многих других факторов. Используйте разбор как материал для наблюдения, а не как окончательный вывод о себе.</p></details>'
-        + (demo ? '' : '<section class="card" id="feedback-block"><p class="kicker" style="color:var(--mint)">помогите тесту стать точнее</p><h2>Похож ли этот портрет на вас?</h2><div class="rows"><div class="row" data-feedback-form><div class="actions"><button class="button" data-feedback="yes">Да, похож</button><button class="button" data-feedback="partly">Скорее да</button><button class="button" data-feedback="no">Нет, не похож</button></div><textarea data-feedback-text rows="3" placeholder="Что не совпало или что хотелось бы добавить? (необязательно)" style="width:100%;margin-top:12px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font-family:inherit"></textarea><div class="actions" style="margin-top:12px"><button class="button" data-feedback-send>Отправить отзыв</button></div></div></div></section>')
-        + '<div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-top:0"><div><p style="margin:0 0 4px;font-size:15px;font-weight:500;color:var(--text)">Остались вопросы или что-то не сработало?</p><p class="fine" style="margin:0">Напишите — разберёмся.</p></div><a class="button secondary" href="mailto:galya.chooru@gmail.com" style="flex-shrink:0">Связаться с разработчиком</a></div>';
+      // ── Block 4: next steps ────────────────────────────────────────────────
+      const steps = [
+        { num:'01', when:'Сразу', title:'Пауза 3 секунды', text:'Сегодня вечером, перед первой реакцией на «не хочу», сосчитайте до трёх. Этого достаточно, чтобы выбрать ответ, а не действовать на автомате.' },
+        { num:'02', when:'На неделю', title: escapeHtml(experiment.title), text: escapeHtml(experiment.text) },
+        { num:'03', when:'Дальше', title:'Назовите чувство до совета', text:'Сделайте привычкой сначала отражать эмоцию («вижу, что злишься»), а уже потом переходить к решению.' },
+      ];
+      const block4 = '<section class="kjr-rc" style="opacity:0;position:relative;overflow:hidden;background:linear-gradient(135deg,#1a1830 0%,#0e1225 50%,#111827 100%);border-radius:30px;padding:clamp(28px,4vw,52px)">'
+        + '<div style="position:absolute;width:480px;height:480px;bottom:-160px;right:-120px;background:radial-gradient(circle,rgba(251,113,133,0.12) 0%,transparent 70%);pointer-events:none"></div>'
+        + '<div style="position:relative">'
+        + '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;color:#818cf8">Что делать дальше</div>'
+        + '<h2 style="margin-top:10px;font-weight:800;font-size:clamp(22px,2.8vw,34px);letter-spacing:-0.02em;line-height:1.1;color:#f0edf8">Три шага, начиная с сегодняшнего вечера</h2>'
+        + '<div style="margin-top:28px;display:flex;flex-direction:column;gap:12px">'
+        + steps.map(s => '<div style="display:flex;gap:20px;align-items:flex-start;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:22px 24px"><div style="flex:0 0 auto;font-size:40px;font-weight:800;letter-spacing:-0.03em;color:#818cf8;line-height:1;min-width:50px">' + s.num + '</div><div><div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;color:#fb7185">' + s.when + '</div><div style="margin-top:5px;font-size:17px;font-weight:700;color:#f0edf8">' + s.title + '</div><p style="margin-top:6px;font-size:14px;line-height:1.6;color:rgba(240,237,248,0.55)">' + s.text + '</p></div></div>').join('')
+        + '</div>'
+        + '<div style="margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;align-items:center">'
+        + '<button class="button secondary" data-start style="border-color:rgba(255,255,255,0.15);color:#f0edf8">Пройти заново</button>'
+        + (demo ? '' : '<section id="feedback-block"><div data-feedback-form style="display:flex;flex-wrap:wrap;gap:10px;align-items:center"><span style="font-size:13px;color:rgba(240,237,248,0.55)">Похож на вас?</span><button class="button" style="font-size:12px;padding:8px 16px;box-shadow:none" data-feedback="yes">Да</button><button class="button" style="font-size:12px;padding:8px 16px;box-shadow:none" data-feedback="partly">Скорее да</button><button class="button" style="font-size:12px;padding:8px 16px;box-shadow:none" data-feedback="no">Нет</button><button style="font-family:inherit;font-size:12px;font-weight:700;padding:8px 16px;border-radius:10px;border:none;background:#fb7185;color:#fff;cursor:pointer" data-feedback-send>Отправить</button></div></section>')
+        + '</div>'
+        + '</div>'
+        + '</section>';
+
+      return '<div style="max-width:1080px;margin:0 auto;padding:clamp(28px,4vw,52px) 0 24px;display:flex;flex-direction:column;gap:24px">'
+        + block1 + block2 + block3 + block4
+        + '</div>';
     }
 
 
     function methodologyPage() {
-      const stages = [
-        ["1", "Кейс", "Ситуация похожа на реальную семейную развилку, где нет одного идеального ответа."],
-        ["2", "Выбор действия", "Показывает первую стратегию: настоять, поддержать, передать выбор, проверить среду."],
-        ["3", "Вынужденный приоритет", "Помогает увидеть, какая ценность становится главной, когда нельзя выбрать все."],
-        ["4", "Открытая реплика", "Показывает, как намерение звучит для ребенка в конкретных словах."],
-        ["5", "Поворот", "Проверяет, меняется ли решение при новой существенной информации."]
+      var accData = [
+        { title: 'Почему прямых вопросов недостаточно',
+          body: '<p style="font-size:15px;line-height:1.7;color:rgba(26,24,48,0.7)">Если спросить родителя «вы поддерживаете самостоятельность ребёнка?», почти каждый ответит «да». Прямые вопросы измеряют идеал, а не поведение.</p>'
+              + '<p style="margin-top:14px;font-size:15px;line-height:1.7;color:rgba(26,24,48,0.7)">Под давлением мы действуем не из ценностей, а из автоматики. Поэтому тест ставит вас в конкретные ситуации с дефицитом времени — и смотрит на выбор, а не на декларацию.</p>' },
+        { title: 'Из чего состоит один кейс',
+          body: '<p style="font-size:15px;line-height:1.7;color:rgba(26,24,48,0.7)">Каждый кейс — это короткая реальная ситуация и пять слоёв реакции:</p>'
+              + '<ul style="margin:12px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:9px;font-size:15px;line-height:1.6;color:rgba(26,24,48,0.7)">'
+              + '<li>Кейс — что произошло и сколько времени на реакцию</li>'
+              + '<li>Выбор — какой из вариантов ближе всего к вашему первому импульсу</li>'
+              + '<li>Приоритет — что для вас важнее в этот момент: контакт, правило, результат</li>'
+              + '<li>Реплика — что именно вы скажете (в одном из кейсов — своими словами)</li>'
+              + '<li>Поворот — как ситуация развивается дальше при вашей реакции</li>'
+              + '</ul>' },
+        { title: 'Что анализируется',
+          body: '<p style="font-size:15px;line-height:1.7;color:rgba(26,24,48,0.7)">Мы не считаем «правильные» ответы — их нет. Анализируется паттерн: к чему вы тяготеете под давлением.</p>'
+              + '<ul style="margin:12px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:9px;font-size:15px;line-height:1.6;color:rgba(26,24,48,0.7)">'
+              + '<li>Куда смещается ваш фокус — на чувство, правило или эффективность</li>'
+              + '<li>Насколько вы оставляете ребёнку пространство выбора</li>'
+              + '<li>Как вы переносите напряжение и неопределённость</li>'
+              + '<li>Путаете ли вы дискомфорт ребёнка с реальной опасностью</li>'
+              + '</ul>' },
+        { title: 'Пять вопросов перед реакцией',
+          body: '<p style="font-size:15px;line-height:1.7;color:rgba(26,24,48,0.7)">Под каждым кейсом скрыты пять внутренних вопросов, которые формируют профиль:</p>'
+              + '<div style="margin-top:14px">'
+              + [['1','Взрослость','Кто сейчас отвечает за безопасность и решение?'],
+                 ['2','Контакт','Заметил ли я, что чувствует ребёнок?'],
+                 ['3','Границы','Моя реакция предсказуема или зависит от настроения?'],
+                 ['4','Автономия','Оставил ли я ребёнку хоть какой-то выбор?'],
+                 ['5','Риск/труд','Это правда опасно — или просто трудно и неприятно?']].map(function(r) {
+                   return '<div style="display:grid;grid-template-columns:40px 160px 1fr;gap:16px;align-items:baseline;padding:14px 0;border-top:1px solid rgba(26,24,48,0.08)">'
+                     + '<span style="font-size:20px;font-weight:800;color:#6366f1">' + r[0] + '</span>'
+                     + '<span style="font-size:13px;font-weight:700;color:#1a1830">' + r[1] + '</span>'
+                     + '<span style="font-size:15px;line-height:1.55;color:rgba(26,24,48,0.7)">' + r[2] + '</span>'
+                     + '</div>';
+                 }).join('')
+              + '</div>' },
       ];
-      const descriptions = SCALE_DESCRIPTIONS;
-      const foundations = ${JSON.stringify(scientificFoundations)};
-      const questionRows = REACTION_QUESTIONS.map(item => '<article class="row"><p class="fine">вопрос ' + item.number + ' · ' + SCALE_TITLES[item.scaleKey] + '</p><h3>' + escapeHtml(item.title) + '</h3><p>' + escapeHtml(item.text) + '</p><p class="fine">' + escapeHtml(item.sourceHint) + '</p></article>').join("");
-      return '<section id="methodology" class="article"><section class="article-hero"><p class="kicker">методика</p><h1>Как мы превращаем шесть ситуаций в профиль решений</h1><p class="lead" style="margin-left:0;text-align:left">Это экспериментальный кейс-тест: он помогает увидеть паттерны, но не ставит диагнозы и не делает окончательных выводов о человеке.</p></section><details class="card"><summary><h2>Почему прямых вопросов недостаточно</h2></summary><p>На прямой вопрос легко ответить правильно и красиво. В кейсе приходится выбирать между ценностями, которые одновременно важны: контакт, граница, безопасность, дисциплина и самостоятельность.</p></details><details class="card"><summary><h2>Из чего состоит один кейс</h2></summary><div class="rows">' + stages.map(item => '<div class="row stage"><span class="num">' + item[0] + '</span><h3>' + item[1] + '</h3><p>' + item[2] + '</p></div>').join("") + '</div></details><details class="card"><summary><h2>Что анализируется</h2></summary><p>Закрытые ответы считаются по фиксированной системе весов. Открытые ответы анализируются по признакам: признание состояния ребенка, ясность границы, поддержка самостоятельности, угрозы/унижение/спасательство, конкретность дальнейших действий. Итоговый профиль собирается из обоих источников.</p><p>Если внешний ИИ-анализ недоступен или API-ключ не настроен, открытые ответы разбирает локальный fallback-анализатор по прозрачным правилам и ключевым признакам. Он помогает не терять результат, но может быть менее точным, чем экспертная или расширенная ИИ-разметка.</p></details><details class="card"><summary><p class="kicker" style="color:var(--yellow)">практический фреймворк</p><h2>Пять вопросов перед реакцией</h2></summary><p>Эти вопросы соединяют методику с практикой: каждый вопрос связан с одной из шкал и помогает замедлить автоматическую реакцию на детское «не хочу».</p><div class="rows">' + questionRows + '</div></details><section class="card"><h2>Семь шкал: что они измеряют</h2><div class="rows">' + SCALE_KEYS.map(key => '<div class="row"><h3>' + (SCALE_ICONS[key] || '') + ' ' + SCALE_TITLES[key] + '</h3><p>' + descriptions[key] + '</p><p class="fine"><strong>Близкий академический конструкт:</strong> ' + SCALE_ACADEMIC_BASIS[key] + '</p></div>').join("") + '</div></section><details class="card"><summary><p class="kicker" style="color:var(--mint)">теоретическая рамка</p><h2>На чем базируются шкалы</h2></summary><p>Это не копия одной психологической методики и не валидированный опросник. Мы собрали рабочую модель из нескольких признанных рамок развития и воспитания, чтобы описывать не «тип родителя», а способ принятия решений в конфликтной ситуации.</p><div class="rows">' + foundations.map(item => '<article class="row"><h3>' + escapeHtml(item.title) + '</h3><p>' + escapeHtml(item.description) + '</p><a class="pill" href="' + escapeHtml(item.href) + '" target="_blank" rel="noreferrer">источник</a></article>').join("") + '</div></details><details class="card" style="border-color:var(--mint);background:var(--bg)"><summary><h2>Что этот тест не делает</h2></summary><p>Инструмент не является клинической диагностикой, не измеряет личность родителя и не предназначен для постановки психологических заключений. Это рефлексивный ситуационный тренажер, опирающийся на эмпирически изученные конструкты родительского поведения (см. таблицу выше). Результаты показывают вероятные паттерны ответа в предложенных ситуациях, а не стабильные характеристики личности.</p></details><details class="card"><summary><h2>Откуда взялись семь шкал</h2></summary><p>Каждая шкала описывает отдельное напряжение, которое регулярно возникает в родительских решениях: кто несет взрослую ответственность, где нужен контакт, какая граница остается, сколько самостоятельности посильно ребенку, как выдерживается конфликт, меняется ли решение при новых фактах и отличаем ли мы трудность от небезопасности.</p><p>Веса вариантов заданы экспертно и будут пересматриваться после пилота: мы будем сравнивать автоматические профили с обратной связью пользователей и разметкой специалистов с психологическим образованием.</p><p>Сейчас в основе теста — 6 ситуаций и около 18–20 весовых решений, которые распределены по 7 шкалам. Это пилотный объем: на каждую шкалу приходится всего несколько решений, поэтому близкие баллы по разным шкалам не стоит читать как точную разницу — это, скорее, направление и повод присмотреться, а не строгое измерение. Расширение числа ситуаций — одна из задач после пилота.</p></details><details class="card"><summary><h2>Как проходит верификация</h2></summary><p>Мы сравниваем три слоя: автоматический результат, обратную связь пользователя после результата и независимую экспертную разметку специалистов с психологическим образованием. Главный вопрос апробации: совпадает ли профиль с тем, что видит пользователь и что отмечает эксперт по рубрике.</p></details><details class="card" style="border-color:var(--mint);background:var(--bg)"><summary><h2>Почему это пока не валидированный тест</h2></summary><p>Сейчас корректнее называть этот инструмент экспериментальным кейс-тестом или тренажером родительской рефлексии. Чтобы методика могла называться валидированным психологическим тестом, необходимы отдельные исследования надежности, валидности и нормативных показателей. Эта работа еще не завершена.</p><p>Отсутствие завершенной валидации не делает ответы бессмысленными. Кейсы помогают замедлить автоматическую реакцию, заметить свои приоритеты и увидеть расхождение между намерением и конкретными словами. Однако такие наблюдения следует воспринимать как гипотезы для размышления, а не как доказанные характеристики личности.</p></details></section>';
+      var scalesData = [
+        { num:'01', name:'Ответственность взрослого', desc:'Кто отвечает за безопасность и ключевые решения — и не перекладывается ли это на ребёнка раньше времени.' },
+        { num:'02', name:'Эмоциональный контакт', desc:'Насколько родитель замечает и называет чувства ребёнка, прежде чем переходить к решению.' },
+        { num:'03', name:'Последовательность границ', desc:'Работают ли правила стабильно или зависят от настроения и усталости взрослого.' },
+        { num:'04', name:'Поддержка автономии', desc:'Даёте ли вы ребёнку реальный выбор и пространство для собственных решений внутри ваших рамок.' },
+        { num:'05', name:'Толерантность к конфликту', desc:'Как вы переносите напряжение и спор — выдерживаете или спешите снять любой ценой.' },
+        { num:'06', name:'Гибкость', desc:'Можете ли вы изменить решение, не воспринимая это как угрозу своему авторитету.' },
+        { num:'07', name:'Отличие трудного от опасного', desc:'Различаете ли вы реальную угрозу и просто дискомфорт, непривычность, лень.' },
+      ];
+      var accordionHTML = accData.map(function(ac, i) {
+        return '<div class="kjr-rc" style="opacity:0;background:#f2f1f8;border-radius:24px;border:1px solid rgba(26,24,48,0.06);overflow:hidden;color:#1a1830">'
+          + '<div onclick="(function(el){var b=el.nextElementSibling;var open=b.style.maxHeight!==\\x270px\\x27&&b.style.maxHeight!==\\x27\\x27;b.style.maxHeight=open?\\x270px\\x27:(b.scrollHeight+\\x27px\\x27);b.style.opacity=open?\\x270\\x27:\\x271\\x27;el.querySelector(\\x27.macc-arr\\x27).style.transform=open?\\x27rotate(0)\\x27:\\x27rotate(180deg)\\x27})(this)" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 28px;cursor:pointer">'
+          + '<span style="font-size:clamp(17px,2vw,21px);font-weight:700;letter-spacing:-0.01em">' + escapeHtml(ac.title) + '</span>'
+          + '<span class="macc-arr" style="flex:0 0 auto;width:32px;height:32px;border-radius:99px;background:rgba(99,102,241,0.10);color:#6366f1;display:inline-flex;align-items:center;justify-content:center;transition:transform 0.3s ease;font-size:15px">▾</span>'
+          + '</div>'
+          + '<div style="max-height:' + (i === 0 ? 'none' : '0') + ';opacity:' + (i === 0 ? '1' : '0') + ';overflow:hidden;transition:max-height 0.4s ease,opacity 0.3s ease">'
+          + '<div style="padding:0 28px 28px">' + ac.body + '</div>'
+          + '</div></div>';
+      }).join('');
+      var scalesHTML = scalesData.map(function(s) {
+        return '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:20px">'
+          + '<div style="display:flex;gap:10px;align-items:baseline">'
+          + '<span style="font-size:12px;font-weight:800;color:#fb7185">' + s.num + '</span>'
+          + '<span style="font-size:16px;font-weight:700;color:#f0edf8">' + escapeHtml(s.name) + '</span>'
+          + '</div>'
+          + '<p style="margin-top:8px;font-size:13px;line-height:1.6;color:rgba(240,237,248,0.55)">' + escapeHtml(s.desc) + '</p>'
+          + '</div>';
+      }).join('');
+
+      return '<section id="methodology" style="max-width:880px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 40px">'
+
+        // HERO
+        + '<div style="position:relative;padding:clamp(56px,8vw,100px) 0 clamp(40px,5vw,60px);overflow:hidden">'
+        + '<div style="position:absolute;width:520px;height:520px;top:-160px;left:-80px;background:radial-gradient(circle,rgba(99,102,241,0.16) 0%,transparent 70%);pointer-events:none"></div>'
+        + '<div style="position:relative">'
+        + '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.15em;font-weight:700;color:#fb7185">Методика</div>'
+        + '<h1 style="margin-top:16px;font-weight:800;font-size:clamp(34px,5vw,60px);letter-spacing:-0.03em;line-height:1.05">Как мы превращаем шесть ситуаций в профиль решений</h1>'
+        + '<p style="margin-top:20px;font-size:17px;line-height:1.7;color:rgba(240,237,248,0.55);max-width:600px">Тест не спрашивает «какой вы родитель» напрямую. Он наблюдает, что вы выбираете под давлением — и собирает из этих выборов профиль по семи шкалам.</p>'
+        + '</div></div>'
+
+        // ACCORDIONS
+        + '<div style="display:flex;flex-direction:column;gap:14px">' + accordionHTML + '</div>'
+
+        // 7 SCALES
+        + '<section class="kjr-rc" style="opacity:0;background:linear-gradient(135deg,#1a1830 0%,#0e1225 50%,#111827 100%);border-radius:24px;padding:clamp(24px,4vw,40px);margin-top:14px">'
+        + '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;color:#818cf8">7 шкал измерения</div>'
+        + '<h2 style="margin-top:10px;font-weight:800;font-size:clamp(22px,2.6vw,32px);letter-spacing:-0.02em;line-height:1.1;color:#f0edf8">Что именно измеряет тест</h2>'
+        + '<div class="kjr-scales-grid" style="margin-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:12px">' + scalesHTML + '</div>'
+        + '</section>'
+
+        // CAVEATS
+        + '<section class="kjr-rc" style="opacity:0;display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px">'
+        + '<div style="background:#f2f1f8;border-left:4px solid #fb7185;border-radius:0 20px 20px 0;padding:24px 28px;color:#1a1830">'
+        + '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;color:#e85f7a">Что этот тест не делает</div>'
+        + '<p style="margin-top:12px;font-size:15px;line-height:1.7;color:rgba(26,24,48,0.7)">Тест не ставит диагнозов и не оценивает вас как «хорошего» или «плохого» родителя. Он не заменяет консультацию психолога и не предсказывает поведение ребёнка. Это инструмент саморефлексии, а не клинической диагностики.</p>'
+        + '</div>'
+        + '<div style="background:#f2f1f8;border-left:4px solid #fb7185;border-radius:0 20px 20px 0;padding:24px 28px;color:#1a1830">'
+        + '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;color:#e85f7a">Почему это не валидированный тест</div>'
+        + '<p style="margin-top:12px;font-size:15px;line-height:1.7;color:rgba(26,24,48,0.7)">Методика опирается на признанные психологические концепции, но сама по себе не проходила процедуру научной валидации с выборкой и проверкой надёжности. Это экспериментальный, развивающийся инструмент 2026 года.</p>'
+        + '</div>'
+        + '</section>'
+
+        + '</section>';
     }
 
     function aboutPage() {
-      const galinaFacts = [
-        "вундеркинд: закончила школу в 12 лет, 5 классов прошла за 1 год",
-        "высшее психологическое образование получила в 18 лет",
-        "сооснователь и COO Intelligent University",
-        "психологическое образование, аспирантура по педагогике и психологии профобразования",
-        "15+ лет в обучении, корпоративных университетах, EdTech и дизайн-мышлении",
-        "организатор международных инженерных и дизайн-мышление соревнований для детей с 30 000+ участников"
+      var authors = [
+        {
+          role: 'Автор и продюсер проекта',
+          name: 'Галина Яновская',
+          imgSrc: '/authors/galina-yanovskaya-circle.png',
+          imgAlt: 'Галина Яновская',
+          bio: 'Создатель и продюсер проекта «Какой я родитель». Собрала команду, методику и формат теста так, чтобы он говорил с современными работающими родителями на их языке — честно, без морализаторства и чувства вины.',
+          facts: ['Автор идеи и формата', 'Продюсирование проекта', 'ООО «Интеллект Университет»'],
+          tgLabel: 'Telegram @thinking_kids',
+          tgLink: 'https://t.me/thinking_kids',
+        },
+        {
+          role: 'Научно-методический эксперт',
+          name: 'Людмила Экхардт',
+          imgSrc: '/authors/ludmila-ekhardt-circle.png',
+          imgAlt: 'Людмила Экхардт',
+          bio: 'Отвечает за научно-методическую основу теста. Перевела академические концепции — теорию привязанности и авторитетного родительства — в живые ситуации и семь рабочих шкал, по которым строится профиль.',
+          facts: ['Методология и шкалы', 'Психология развития', 'Научная редактура'],
+          tgLabel: 'Telegram',
+          tgLink: '#',
+        },
       ];
-      const ludmilaFacts = [
-        "кандидат психологических наук, организационная психология МГУ",
-        "член Российского психологического общества и АППП",
-        "25+ лет опыта психологической практики, коучинга, HR и организационной диагностики",
-        "экспертиза в разработке развивающих программ, обратной связи и методической работе"
-      ];
-      return '<section id="about" class="article"><section class="article-hero"><p class="kicker">о проекте</p><h1>«Какой я родитель» — инструмент для родителей, которым нужен не ярлык, а материал для размышления.</h1><p class="lead" style="margin-left:0;text-align:left">Мы соединяем реалистичные семейные кейсы, автоматический подсчет по весам и аккуратный анализ открытых ответов, чтобы увидеть привычные сценарии решений в ситуациях детского сопротивления.</p></section><section class="author"><div class="card"><div class="portrait"><img src="/authors/galina-yanovskaya-circle.png" alt="Галина Яновская" /></div></div><div class="card"><p class="kicker" style="color:var(--pink)">автор и продюсер проекта</p><h2>Галина Яновская</h2><p>В проекте Галина отвечает за продуктовую идею, голос, сценарии кейсов, связь с родительской аудиторией и превращение методики в понятный цифровой опыт.</p><p>Важная оптика проекта — без давления на «правильного» родителя или «успешного» ребенка.</p><div class="facts">' + galinaFacts.map(fact => '<div class="fact">' + escapeHtml(fact) + '</div>').join("") + '</div><p><a class="pill" href="https://t.me/thinking_kids" target="_blank" rel="noreferrer">Telegram @thinking_kids</a></p></div></section><section class="author"><div class="card"><div class="portrait mint"><img src="/authors/ludmila-ekhardt-circle.png" alt="Людмила Экхардт" /></div></div><div class="card"><p class="kicker" style="color:var(--mint)">научно-методический эксперт</p><h2>Людмила Экхардт</h2><p>Людмила помогает проверять психологическую корректность рубрик, формулировок, ограничений методики и логики интерпретации ответов.</p><p>Ее экспертиза важна для того, чтобы результат оставался рефлексивным инструментом, а не превращался в диагноз или оценку родителя.</p><div class="facts">' + ludmilaFacts.map(fact => '<div class="fact">' + escapeHtml(fact) + '</div>').join("") + '</div></div></section></section>';
+      var authorCards = authors.map(function(a) {
+        return '<section class="kjr-rc kjr-author" style="opacity:0;background:#f2f1f8;border-radius:28px;padding:clamp(24px,4vw,40px);color:#1a1830">'
+          + '<div style="width:160px;height:160px;border-radius:99px;overflow:hidden;background:linear-gradient(135deg,#e8e6ff,#f0eeff);display:flex;align-items:center;justify-content:center;flex-shrink:0">'
+          + '<img src="' + escapeHtml(a.imgSrc) + '" alt="' + escapeHtml(a.imgAlt) + '" style="width:100%;height:100%;object-fit:cover" />'
+          + '</div>'
+          + '<div>'
+          + '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;color:#6366f1">' + escapeHtml(a.role) + '</div>'
+          + '<h2 style="margin-top:8px;font-weight:800;font-size:clamp(24px,3vw,36px);letter-spacing:-0.02em;line-height:1.05">' + escapeHtml(a.name) + '</h2>'
+          + '<p style="margin-top:14px;font-size:15px;line-height:1.7;color:rgba(26,24,48,0.7);max-width:480px">' + escapeHtml(a.bio) + '</p>'
+          + '<div style="margin-top:18px;display:flex;flex-wrap:wrap;gap:8px">'
+          + a.facts.map(function(f){ return '<span style="background:rgba(99,102,241,0.10);border:1px solid rgba(99,102,241,0.18);color:#4f46c9;font-size:12px;font-weight:600;border-radius:99px;padding:7px 14px">' + escapeHtml(f) + '</span>'; }).join('')
+          + '</div>'
+          + '<a href="' + escapeHtml(a.tgLink) + '" target="_blank" rel="noreferrer" style="margin-top:18px;display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#6366f1">' + escapeHtml(a.tgLabel) + ' →</a>'
+          + '</div>'
+          + '</section>';
+      }).join('');
+
+      return '<section id="about" style="max-width:880px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 40px">'
+
+        // HERO
+        + '<div style="position:relative;padding:clamp(56px,8vw,100px) 0 clamp(36px,5vw,56px);overflow:hidden">'
+        + '<div style="position:absolute;width:520px;height:520px;top:-160px;right:-100px;background:radial-gradient(circle,rgba(251,113,133,0.13) 0%,transparent 70%);pointer-events:none"></div>'
+        + '<div style="position:relative">'
+        + '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.15em;font-weight:700;color:#fb7185">О проекте</div>'
+        + '<h1 style="margin-top:16px;font-weight:800;font-size:clamp(34px,5vw,60px);letter-spacing:-0.03em;line-height:1.05">Тест, который делают практики, а не алгоритм</h1>'
+        + '<p style="margin-top:20px;font-size:17px;line-height:1.7;color:rgba(240,237,248,0.55);max-width:600px">«Какой я родитель» вырос из живой работы с семьями. Мы хотели инструмент, который не оценивает и не пугает, а помогает родителю на секунду увидеть себя со стороны.</p>'
+        + '</div></div>'
+
+        // AUTHOR CARDS
+        + '<div style="display:flex;flex-direction:column;gap:20px">' + authorCards + '</div>'
+
+        // CTA
+        + '<section class="kjr-rc" style="opacity:0;background:linear-gradient(135deg,#1a1830 0%,#0e1225 50%,#111827 100%);border-radius:28px;padding:clamp(28px,4vw,48px);text-align:center;margin-top:20px">'
+        + '<h2 style="font-weight:800;font-size:clamp(22px,2.8vw,34px);letter-spacing:-0.02em;line-height:1.1;color:#f0edf8">Узнайте свой родительский архетип</h2>'
+        + '<p style="margin-top:14px;font-size:16px;color:rgba(240,237,248,0.55)">Шесть ситуаций · 10 минут · без регистрации</p>'
+        + '<a href="#test" style="display:inline-block;margin-top:26px;background:#6366f1;color:#fff;font-weight:700;font-size:15px;padding:14px 32px;border-radius:12px;box-shadow:0 0 32px rgba(99,102,241,0.35)">Пройти тест бесплатно →</a>'
+        + '</section>'
+
+        + '</section>';
     }
 
     function escapeHtml(value) {
@@ -1443,9 +1665,9 @@ function html() {
             .fromTo("#kjr-lead",{opacity:0,y:20},{opacity:1,y:0,duration:0.6,ease:"power2.out"},0.30)
             .fromTo("#kjr-cta",{opacity:0,scale:0.95},{opacity:1,scale:1,duration:0.6,ease:"power2.out"},0.45)
             .to("#kjr-dots",{opacity:0.6,duration:0.8,ease:"power2.out"},0.60);
-          g.utils.toArray(".kjr-card").forEach(function(card) {
+          g.utils.toArray(".kjr-card, .kjr-rc").forEach(function(card) {
             g.fromTo(card,{opacity:0,y:40},{opacity:1,y:0,duration:0.7,ease:"power2.out",
-              scrollTrigger:{trigger:card,start:"top 85%",once:true}});
+              scrollTrigger:{trigger:card,start:"top 88%",once:true}});
           });
           if (window.ScrollTrigger) {
             window.ScrollTrigger.create({trigger:".kjr-bento",start:"top 85%",once:true,onEnter:function() {
