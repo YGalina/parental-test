@@ -1480,20 +1480,30 @@ function html() {
         + '</section>';
 
       // ── TG gate block ──────────────────────────────────────────────────────
-      const blockTg = demo ? '' : '<section class="kjr-rc kjr-tg-gate" style="opacity:0;background:linear-gradient(135deg,#1a1830 0%,#0e1225 60%,#0d1520 100%);border-radius:30px;padding:clamp(28px,4vw,48px);text-align:center;border:1px solid rgba(99,102,241,0.18)">'
+      // ── TG gate: показываем разбор только после подписки ───────────────────
+      var gatePassed = false;
+      try { gatePassed = localStorage.getItem('kjr_tg_gate') === '1'; } catch (e) {}
+      const showGate = !demo && !gatePassed;
+
+      const blockTg = !showGate ? '' : '<section id="kjr-gate" class="kjr-rc kjr-tg-gate" style="opacity:0;background:linear-gradient(135deg,#1a1830 0%,#0e1225 60%,#0d1520 100%);border-radius:30px;padding:clamp(28px,4vw,48px);text-align:center;border:1px solid rgba(99,102,241,0.18)">'
         + '<div style="display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:18px;background:rgba(99,102,241,0.15);margin-bottom:20px">'
         + '<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.7 8.02c-.12.57-.46.71-.93.44l-2.58-1.9-1.24 1.2c-.14.14-.26.26-.53.26l.19-2.65 4.84-4.37c.21-.19-.05-.29-.32-.1L7.39 15.1l-2.54-.79c-.55-.17-.56-.55.12-.82l9.94-3.83c.46-.17.86.11.73.14z" fill="#818cf8"/></svg>'
         + '</div>'
-        + '<h2 style="font-weight:800;font-size:clamp(24px,3vw,36px);letter-spacing:-0.02em;line-height:1.1;color:#f0edf8">Подпишитесь — и получите полный разбор</h2>'
-        + '<p style="margin-top:14px;font-size:16px;line-height:1.65;color:rgba(240,237,248,0.55);max-width:480px;margin-left:auto;margin-right:auto">В канале @thinking_kids — практики по вашему архетипу, разборы ситуаций и материалы для осознанного родительства. Без советов «просто будьте спокойнее».</p>'
+        + '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;color:#818cf8">Остался один шаг</div>'
+        + '<h2 style="margin-top:10px;font-weight:800;font-size:clamp(24px,3vw,36px);letter-spacing:-0.02em;line-height:1.1;color:#f0edf8">Полный разбор открывается после подписки</h2>'
+        + '<p style="margin-top:14px;font-size:16px;line-height:1.65;color:rgba(240,237,248,0.55);max-width:500px;margin-left:auto;margin-right:auto">Радар по 7 шкалам, расшифровка каждой и шаги на эту неделю — всё ниже. В канале @thinking_kids вы найдёте практики по вашему архетипу и разборы реальных ситуаций.</p>'
         + '<div style="margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center">'
-        + '<a href="https://t.me/thinking_kids" target="_blank" rel="noreferrer" style="display:inline-flex;align-items:center;gap:10px;background:#6366f1;color:#fff;font-weight:700;font-size:15px;padding:14px 28px;border-radius:14px;text-decoration:none;box-shadow:0 0 28px rgba(99,102,241,0.35)">Подписаться на @thinking_kids →</a>'
+        + '<a href="https://t.me/thinking_kids" target="_blank" rel="noreferrer" style="display:inline-flex;align-items:center;gap:10px;background:#6366f1;color:#fff;font-weight:700;font-size:15px;padding:14px 28px;border-radius:14px;text-decoration:none;box-shadow:0 0 28px rgba(99,102,241,0.35)">1 · Подписаться на @thinking_kids →</a>'
+        + '<button onclick="(function(){try{localStorage.setItem(\\x27kjr_tg_gate\\x27,\\x271\\x27)}catch(e){}var g=document.getElementById(\\x27kjr-gate\\x27);if(g)g.style.display=\\x27none\\x27;var l=document.getElementById(\\x27kjr-locked\\x27);if(l){l.style.display=\\x27flex\\x27;var els=l.querySelectorAll(\\x27.kjr-rc\\x27);for(var i=0;i<els.length;i++){els[i].style.opacity=\\x271\\x27;els[i].style.transform=\\x27none\\x27}if(window.ScrollTrigger)window.ScrollTrigger.refresh();l.scrollIntoView({behavior:\\x27smooth\\x27})}})()" style="font-family:inherit;display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);color:#f0edf8;font-weight:700;font-size:15px;padding:14px 28px;border-radius:14px;cursor:pointer">2 · ✅ Я подписался — показать разбор</button>'
         + '</div>'
-        + '<p style="margin-top:16px;font-size:12px;color:rgba(240,237,248,0.30)">Полный профиль по 7 шкалам — ниже</p>'
+        + '<p style="margin-top:16px;font-size:12px;color:rgba(240,237,248,0.30)">Архетип уже выше. Полный профиль по 7 шкалам — после подписки.</p>'
         + '</section>';
 
+      const lockedOpen = showGate ? 'none' : 'flex';
+      const lockedWrap = '<div id="kjr-locked" style="display:' + lockedOpen + ';flex-direction:column;gap:24px">' + block2 + block3 + block4 + '</div>';
+
       return '<div style="max-width:1080px;margin:0 auto;padding:clamp(28px,4vw,52px) 0 24px;display:flex;flex-direction:column;gap:24px">'
-        + block1 + blockTg + block2 + block3 + block4
+        + block1 + blockTg + lockedWrap
         + '</div>';
     }
 
