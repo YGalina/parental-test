@@ -558,8 +558,11 @@ function html() {
       .kjr-navlinks { display: none !important; }
       .kjr-author { grid-template-columns: 1fr !important; text-align:center; justify-items:center; }
       .kjr-arch-block { grid-template-columns: 1fr !important; }
+      .kjr-arch-block > div:first-child { width: 140px !important; height: 140px !important; aspect-ratio: auto !important; border-radius: 99px !important; margin: 0 auto; }
       .kjr-radar-block { grid-template-columns: 1fr !important; }
       .kjr-scales-grid { grid-template-columns: 1fr !important; }
+      .kjr-tg-gate { padding: 28px 20px !important; }
+      .kjr-tg-gate h2 { font-size: 22px !important; }
     }
 
     /* ── Result visualization ───────────────────────────── */
@@ -1476,8 +1479,21 @@ function html() {
         + '</div>'
         + '</section>';
 
+      // ── TG gate block ──────────────────────────────────────────────────────
+      const blockTg = demo ? '' : '<section class="kjr-rc kjr-tg-gate" style="opacity:0;background:linear-gradient(135deg,#1a1830 0%,#0e1225 60%,#0d1520 100%);border-radius:30px;padding:clamp(28px,4vw,48px);text-align:center;border:1px solid rgba(99,102,241,0.18)">'
+        + '<div style="display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:18px;background:rgba(99,102,241,0.15);margin-bottom:20px">'
+        + '<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.7 8.02c-.12.57-.46.71-.93.44l-2.58-1.9-1.24 1.2c-.14.14-.26.26-.53.26l.19-2.65 4.84-4.37c.21-.19-.05-.29-.32-.1L7.39 15.1l-2.54-.79c-.55-.17-.56-.55.12-.82l9.94-3.83c.46-.17.86.11.73.14z" fill="#818cf8"/></svg>'
+        + '</div>'
+        + '<h2 style="font-weight:800;font-size:clamp(24px,3vw,36px);letter-spacing:-0.02em;line-height:1.1;color:#f0edf8">Подпишитесь — и получите полный разбор</h2>'
+        + '<p style="margin-top:14px;font-size:16px;line-height:1.65;color:rgba(240,237,248,0.55);max-width:480px;margin-left:auto;margin-right:auto">В канале @thinking_kids — практики по вашему архетипу, разборы ситуаций и материалы для осознанного родительства. Без советов «просто будьте спокойнее».</p>'
+        + '<div style="margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center">'
+        + '<a href="https://t.me/thinking_kids" target="_blank" rel="noreferrer" style="display:inline-flex;align-items:center;gap:10px;background:#6366f1;color:#fff;font-weight:700;font-size:15px;padding:14px 28px;border-radius:14px;text-decoration:none;box-shadow:0 0 28px rgba(99,102,241,0.35)">Подписаться на @thinking_kids →</a>'
+        + '</div>'
+        + '<p style="margin-top:16px;font-size:12px;color:rgba(240,237,248,0.30)">Полный профиль по 7 шкалам — ниже</p>'
+        + '</section>';
+
       return '<div style="max-width:1080px;margin:0 auto;padding:clamp(28px,4vw,52px) 0 24px;display:flex;flex-direction:column;gap:24px">'
-        + block1 + block2 + block3 + block4
+        + block1 + blockTg + block2 + block3 + block4
         + '</div>';
     }
 
