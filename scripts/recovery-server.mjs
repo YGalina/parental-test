@@ -1119,6 +1119,10 @@ function html() {
         + '<div style="max-width:1000px;margin:28px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,0.07);font-size:12px;color:rgba(240,237,248,0.40)">© 2026 ООО «Интеллект Университет» · ИНН 9703019107</div>'
         + '</footer>'
 
+        // METHODOLOGY & AUTHORS (full content)
+        + methodologyPage()
+        + aboutPage()
+
         // TEST section
         + '<section id="test" class="article" style="padding:0 clamp(20px,5vw,56px) 60px">' + testSection() + '</section>'
       );
