@@ -1053,8 +1053,8 @@ function html() {
         // NAV
         '<nav class="kjr-nav">'
         + '<a class="kjr-brand" href="/" data-link><span>Какой я родитель</span><small>тест · дети 6–17 лет</small></a>'
-        + '<div class="kjr-navlinks"><a href="#methodology">Методика</a><a href="#authors">Авторы</a></div>'
-        + '<a href="#test" style="font-size:13px;font-weight:700;background:#6366f1;color:#fff;padding:9px 20px;border-radius:10px;display:inline-block">Начать тест</a>'
+        + '<div class="kjr-navlinks"><a href="#methodology" onclick="event.preventDefault();document.getElementById(\\x27methodology\\x27).scrollIntoView({behavior:\\x27smooth\\x27})">Методика</a><a href="#about" onclick="event.preventDefault();document.getElementById(\\x27about\\x27).scrollIntoView({behavior:\\x27smooth\\x27})">Авторы</a></div>'
+        + '<button onclick="start()" style="font-size:13px;font-weight:700;background:#6366f1;color:#fff;padding:9px 20px;border-radius:10px;border:none;cursor:pointer;font-family:inherit">Начать тест</button>'
         + '</nav>'
 
         // HERO
@@ -1066,7 +1066,7 @@ function html() {
         + '<div id="kjr-eyebrow" style="opacity:0;display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.30);color:#818cf8;border-radius:99px;padding:7px 16px;font-size:12px;font-weight:600"><span style="width:6px;height:6px;border-radius:99px;background:#818cf8;display:inline-block"></span>экспериментальный тест · 6 ситуаций</div>'
         + '<h1 id="kjr-h1" style="opacity:0;margin-top:26px;font-weight:800;font-size:clamp(40px,5.5vw,76px);letter-spacing:-0.035em;line-height:1.04">Когда ребёнок говорит <span style="color:#fb7185;font-style:italic">«не хочу»</span>, вы реагируете раньше, чем думаете</h1>'
         + '<p id="kjr-lead" style="opacity:0;max-width:520px;margin:24px auto 0;font-size:17px;line-height:1.7;color:rgba(240,237,248,0.50)">Шесть реальных ситуаций без правильных ответов — и честный разбор того, как именно вы реагируете под давлением.</p>'
-        + '<div id="kjr-cta" style="opacity:0;margin-top:36px"><a href="#test" class="kjr-cta-link" style="display:inline-block;background:#6366f1;color:#fff;font-weight:700;font-size:16px;border-radius:12px;padding:14px 28px;box-shadow:0 0 32px rgba(99,102,241,0.35);transition:transform 0.25s ease,box-shadow 0.25s ease">Пройти тест — 10 минут →</a>'
+        + '<div id="kjr-cta" style="opacity:0;margin-top:36px"><button onclick="start()" class="kjr-cta-link" style="display:inline-block;background:#6366f1;color:#fff;font-weight:700;font-size:16px;border-radius:12px;padding:14px 28px;box-shadow:0 0 32px rgba(99,102,241,0.35);transition:transform 0.25s ease,box-shadow 0.25s ease;border:none;cursor:pointer;font-family:inherit">Пройти тест — 10 минут →</button>'
         + '<p style="margin-top:16px;font-size:12px;color:rgba(240,237,248,0.50)">без регистрации · данные только в браузере</p></div>'
         + '</div></header>'
 
@@ -1109,7 +1109,7 @@ function html() {
         + '<div style="position:relative;max-width:640px;margin:0 auto;text-align:center">'
         + '<h2 style="font-weight:800;font-size:clamp(26px,3.2vw,42px);letter-spacing:-0.025em;line-height:1.08;color:#f0edf8">Узнайте свой родительский архетип</h2>'
         + '<p style="margin-top:16px;font-size:16px;color:rgba(240,237,248,0.55)">Шесть ситуаций · 10 минут · без регистрации</p>'
-        + '<a href="#test" class="kjr-cta-link" style="display:inline-block;margin-top:32px;background:#6366f1;color:#fff;font-weight:700;font-size:16px;padding:16px 40px;border-radius:12px;box-shadow:0 0 32px rgba(99,102,241,0.35);transition:transform 0.25s ease,box-shadow 0.25s ease">Пройти тест бесплатно →</a>'
+        + '<button onclick="start()" class="kjr-cta-link" style="display:inline-block;margin-top:32px;background:#6366f1;color:#fff;font-weight:700;font-size:16px;padding:16px 40px;border-radius:12px;box-shadow:0 0 32px rgba(99,102,241,0.35);transition:transform 0.25s ease,box-shadow 0.25s ease;border:none;cursor:pointer;font-family:inherit">Пройти тест бесплатно →</button>'
         + '<div style="margin-top:28px;display:flex;flex-wrap:wrap;justify-content:center;gap:10px">'
         + '<span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);color:rgba(240,237,248,0.75);border-radius:99px;padding:9px 16px;font-size:13px;font-weight:500">🔒 без регистрации</span>'
         + '<span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);color:rgba(240,237,248,0.75);border-radius:99px;padding:9px 16px;font-size:13px;font-weight:500">⏱ 10 минут</span>'
@@ -1117,7 +1117,7 @@ function html() {
         + '</div></div></section>'
 
         // FOOTER
-        + '<footer id="authors" style="margin:0 24px;background:#0e0c18;padding:40px clamp(20px,4vw,40px);border-top:1px solid rgba(255,255,255,0.07)">'
+        + '<footer style="margin:0 24px;background:#0e0c18;padding:40px clamp(20px,4vw,40px);border-top:1px solid rgba(255,255,255,0.07)">'
         + '<div style="max-width:1000px;margin:0 auto;display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between">'
         + '<div><div style="font-weight:700;font-size:15px">Какой я родитель</div><div style="margin-top:6px;font-size:12px;color:rgba(240,237,248,0.50)">Экспериментальная методика · 2026</div></div>'
         + '<div style="display:flex;flex-wrap:wrap;gap:16px 24px;font-size:12px;color:rgba(240,237,248,0.50);max-width:560px">'
@@ -1643,7 +1643,7 @@ function html() {
         + '<section class="kjr-rc" style="opacity:0;background:linear-gradient(135deg,#1a1830 0%,#0e1225 50%,#111827 100%);border-radius:28px;padding:clamp(28px,4vw,48px);text-align:center;margin-top:20px">'
         + '<h2 style="font-weight:800;font-size:clamp(22px,2.8vw,34px);letter-spacing:-0.02em;line-height:1.1;color:#f0edf8">Узнайте свой родительский архетип</h2>'
         + '<p style="margin-top:14px;font-size:16px;color:rgba(240,237,248,0.55)">Шесть ситуаций · 10 минут · без регистрации</p>'
-        + '<a href="#test" style="display:inline-block;margin-top:26px;background:#6366f1;color:#fff;font-weight:700;font-size:15px;padding:14px 32px;border-radius:12px;box-shadow:0 0 32px rgba(99,102,241,0.35)">Пройти тест бесплатно →</a>'
+        + '<button onclick="start()" style="display:inline-block;margin-top:26px;background:#6366f1;color:#fff;font-weight:700;font-size:15px;padding:14px 32px;border-radius:12px;box-shadow:0 0 32px rgba(99,102,241,0.35);border:none;cursor:pointer;font-family:inherit">Пройти тест бесплатно →</button>'
         + '</section>'
 
         + '</section>';
