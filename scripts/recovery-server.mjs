@@ -428,21 +428,26 @@ function html() {
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230C0906'/%3E%3Ccircle cx='22' cy='16' r='7' fill='%23f03eb2'/%3E%3Cpath d='M8 46c0-8 6-14 14-14s14 6 14 14' fill='%23f03eb2'/%3E%3Ccircle cx='45' cy='22' r='5' fill='%237DDBB8'/%3E%3Cpath d='M34 46c0-6 5-10 11-10s11 4 11 10' fill='%237DDBB8'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <style>
     :root {
-      --bg: #0C0906;
-      --panel: #161210;
-      --panel2: #1E1A17;
-      --text: #F0EDE8;
-      --muted: rgba(240,237,232,.55);
-      --line: rgba(240,237,232,.1);
-      --pink: #FF2D8A;
-      --mint: #7DDBB8;
-      --blue: #85AAFF;
-      --yellow: #F5D060;
-      --red: #FF6B6B;
-      --accent: #E8C9A0;
+      --bg: #0e0c18;
+      --bg2: #13111f;
+      --card-dark: #1e1b2e;
+      --card-light: #f2f1f8;
+      --text: #f0edf8;
+      --muted: rgba(240,237,248,.50);
+      --text-dark: #1a1830;
+      --text-dark-muted: rgba(26,24,48,.55);
+      --line: rgba(255,255,255,.07);
+      --line-light: rgba(26,24,48,.10);
+      --indigo: #6366f1;
+      --indigo-light: #818cf8;
+      --coral: #fb7185;
+      --pink: #fb7185;
+      --mint: #818cf8;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -453,299 +458,98 @@ function html() {
       font-size: 16px;
       line-height: 1.6;
       overflow-x: hidden;
-      cursor: none;
+      -webkit-font-smoothing: antialiased;
     }
-    @media (hover: none) { body { cursor: auto; } }
+    ::selection { background: rgba(99,102,241,0.35); color: #fff; }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-      .reveal > *, .fade-up, .stagger > * { transform: none !important; opacity: 1 !important; }
     }
-    body { overflow-x: hidden; }
     a { color: inherit; text-decoration: none; }
 
-    /* ── Custom Cursor ─────────────────────────────────── */
-    #cursor {
-      position: fixed;
-      top: 0; left: 0;
-      width: 36px; height: 36px;
-      border: 1.5px solid rgba(240,237,232,.7);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: transform 0.08s linear, width 0.25s ease, height 0.25s ease, background 0.25s ease, border-color 0.25s ease;
-      mix-blend-mode: difference;
-    }
-    #cursor.hover {
-      width: 60px; height: 60px;
-      background: rgba(240,237,232,.12);
-    }
-    #cursor-dot {
-      position: fixed;
-      top: 0; left: 0;
-      width: 5px; height: 5px;
-      background: var(--mint);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 10000;
-      transform: translate(-50%, -50%);
-    }
-    @media (hover: none) { #cursor, #cursor-dot { display: none; } }
+    /* ── Slider (archetypes) ─────────────────────────── */
+    .kjr-slider::-webkit-scrollbar { height: 0; }
+    .kjr-slider { scrollbar-width: none; }
 
     /* ── Layout ────────────────────────────────────────── */
     .wrap { width: min(1240px, calc(100% - 48px)); margin: 0 auto; }
-    .screen { padding-bottom: 120px; }
 
-    /* ── Header ────────────────────────────────────────── */
-    .top {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: center;
-      gap: 24px;
-      padding: 20px 40px;
-      background: linear-gradient(to bottom, rgba(12,9,6,.95) 0%, transparent 100%);
-      backdrop-filter: blur(0px);
+    /* ── New Nav ────────────────────────────────────────── */
+    .kjr-nav {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px clamp(16px,4vw,40px);
+      background: rgba(14,12,24,0.85);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
     }
-    .brand {
-      display: flex;
-      flex-direction: column;
-      text-transform: uppercase;
-      letter-spacing: .2em;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text);
-      white-space: nowrap;
+    .kjr-brand { display: flex; flex-direction: column; line-height: 1.1; }
+    .kjr-brand span { font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
+    .kjr-brand small { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .kjr-navlinks { display: flex; align-items: center; gap: 28px; }
+    .kjr-navlinks a { font-size: 13px; font-weight: 500; color: rgba(240,237,248,0.70); transition: color .2s; }
+    .kjr-navlinks a:hover { color: var(--text); }
+    .kjr-btn {
+      font-size: 13px; font-weight: 700;
+      background: var(--indigo); color: #fff;
+      padding: 9px 20px; border-radius: 10px;
+      border: none; cursor: pointer; font-family: inherit;
+      transition: background .2s, transform .15s;
     }
-    .brand small { color: var(--muted); font-size: 9px; margin-top: 3px; letter-spacing: .18em; }
-    .header-meta {
-      text-align: center;
-      font-size: 10px;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-    .header-clock { font-size: 10px; color: var(--muted); text-align: right; letter-spacing: .1em; }
-    .nav { display: flex; gap: 8px; align-items: center; }
-    .nav a {
-      height: 36px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 0 16px;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 500;
-      background: transparent;
-      transition: color .2s, border-color .2s, background .2s;
-    }
-    .nav a:hover { color: var(--text); border-color: rgba(240,237,232,.3); }
-    .nav a.primary {
-      background: var(--mint);
-      color: #0C0906;
-      border-color: var(--text);
-      font-weight: 600;
-    }
-    .nav a.primary:hover { background: var(--accent); border-color: var(--accent); }
-    .pill {
-      display: inline-flex; align-items: center; justify-content: center;
-      height: 36px; padding: 0 16px;
-      border: 1px solid var(--line); border-radius: 999px;
-      color: var(--muted); font-size: 13px;
-      background: transparent;
-      transition: color .2s, border-color .2s;
-    }
-    .pill:hover { color: var(--text); border-color: rgba(240,237,232,.3); }
+    .kjr-btn:hover { background: var(--indigo-light); transform: translateY(-1px); }
 
-    /* ── Hero ──────────────────────────────────────────── */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 120px 40px 80px;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(255,45,138,.06) 0%, transparent 60%),
-                  radial-gradient(ellipse 60% 40% at 80% 20%, rgba(133,170,255,.04) 0%, transparent 50%);
-      pointer-events: none;
-    }
-    .hero-eyebrow {
-      font-size: 11px;
-      letter-spacing: .3em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 32px;
-    }
-    .hero h1 {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: clamp(38px, 5.8vw, 88px);
-      line-height: 1.05;
-      font-weight: 400;
-      letter-spacing: -.025em;
-      color: var(--text);
-      max-width: 1000px;
-      margin: 0 0 32px;
-    }
-    .hero h1 em {
-      font-style: italic;
-      color: var(--accent);
-    }
-    .hero-bottom {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 32px;
-      flex-wrap: wrap;
-    }
-    .hero-lead {
-      max-width: 520px;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.7;
-    }
-    .hero-actions {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 12px;
-    }
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 40px;
-    }
-    .chip {
-      display: inline-flex; align-items: center; gap: 7px;
-      height: 32px; padding: 0 14px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--muted);
-      letter-spacing: .05em;
-      background: transparent;
-    }
-    .chip.c-pink { border-color: rgba(255,45,138,.3); color: rgba(255,45,138,.8); }
-    .chip.c-mint { border-color: rgba(125,219,184,.3); color: rgba(125,219,184,.8); }
-
-    /* ── Divider line ───────────────────────────────────── */
-    .divider { border: none; border-top: 1px solid var(--line); margin: 0; }
+    /* ── Floating cards ─────────────────────────────────── */
+    .kjr-card { margin: 0 24px 24px; border-radius: 30px; }
+    .kjr-card-light { background: var(--card-light); color: var(--text-dark); }
+    .kjr-card-dark { background: var(--card-dark); border: 1px solid var(--line); }
+    .kjr-card-gradient { background: linear-gradient(135deg, #1a1830 0%, #0e1225 50%, #111827 100%); border: 1px solid var(--line); overflow: hidden; position: relative; }
+    .kjr-card-pad { padding: clamp(32px,5vw,56px) clamp(20px,4vw,40px); }
 
     /* ── Buttons ────────────────────────────────────────── */
     .button {
-      border: 1px solid var(--mint);
-      height: 54px;
-      padding: 0 32px;
-      border-radius: 999px;
-      font-weight: 600;
-      cursor: pointer;
-      color: #0C0906;
-      background: var(--mint);
-      font-size: 15px;
-      font-family: inherit;
-      letter-spacing: .02em;
-      transition: background .25s, color .25s, border-color .25s, transform .2s;
       display: inline-flex; align-items: center; gap: 8px;
+      background: var(--indigo); color: #fff;
+      font-weight: 700; font-size: 15px; font-family: inherit;
+      border: none; border-radius: 12px; padding: 14px 28px;
+      box-shadow: 0 0 32px rgba(99,102,241,0.35);
+      cursor: pointer;
+      transition: background .2s, transform .2s, box-shadow .2s;
     }
-    .button:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-1px); }
+    .button:hover { background: var(--indigo-light); transform: translateY(-2px); box-shadow: 0 8px 40px rgba(99,102,241,0.50); }
     .button.secondary {
-      background: transparent;
-      color: var(--text);
-      border-color: var(--line);
+      background: transparent; color: var(--text);
+      border: 1px solid var(--line); box-shadow: none;
     }
-    .button.secondary:hover { border-color: rgba(240,237,232,.4); background: rgba(240,237,232,.06); transform: none; }
+    .button.secondary:hover { background: rgba(255,255,255,0.06); transform: none; }
 
-    /* ── Floating bottom nav ────────────────────────────── */
-    .bottom-nav {
-      position: fixed;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 100;
-      display: flex;
-      gap: 4px;
-      background: rgba(22,18,16,.85);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 6px;
+    /* ── Kicker ─────────────────────────────────────────── */
+    .kicker {
+      font-weight: 700; font-size: 11px;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--indigo);
     }
-    .bottom-nav a {
-      height: 36px;
-      padding: 0 20px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--muted);
-      display: inline-flex; align-items: center;
-      transition: color .2s, background .2s;
-      white-space: nowrap;
-    }
-    .bottom-nav a:hover { color: var(--text); background: rgba(240,237,232,.08); }
-    .bottom-nav a.active { background: var(--text); color: var(--bg); font-weight: 600; }
+    .kicker-coral { color: var(--coral); }
+    .kicker-light { color: var(--indigo-light); }
 
-    /* ── Sections ───────────────────────────────────────── */
-    .section {
-      padding: 96px 40px;
-      border-top: 1px solid var(--line);
-    }
-    .section-inner { max-width: 1240px; margin: 0 auto; }
-    .section-header {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 48px;
-      align-items: end;
-      margin-bottom: 64px;
-    }
-    .section-header .kicker { margin-bottom: 16px; }
-    .section-header p { color: var(--muted); line-height: 1.7; }
+    /* ── Divider ─────────────────────────────────────────── */
+    .divider { border: none; border-top: 1px solid var(--line); margin: 0; }
 
-    /* ── Scroll reveal animations ─────────────────────── */
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: translateY(0); } }
-    .hero-eyebrow { animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both; }
-    .hero h1 { animation: fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) 0.2s both; }
-    .hero-lead { animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.35s both; }
-    .hero-actions { animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.45s both; }
-    .hero .chips { animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.55s both; }
-    .reveal {
-      overflow: hidden;
+    /* ── Sections (old test/result sections) ────────────── */
+    .section { padding: 60px clamp(20px,5vw,56px); }
+    .section-inner { max-width: 1000px; margin: 0 auto; }
+    .section-header { margin-bottom: 40px; }
+
+    /* ── Responsive ─────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .kjr-bento { grid-template-columns: 1fr !important; }
+      .kjr-bento-wide { grid-column: auto !important; }
     }
-    .reveal > * {
-      display: block;
-      transform: translateY(60px);
-      opacity: 0;
-      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    @media (max-width: 768px) {
+      .kjr-card { margin-left: 12px !important; margin-right: 12px !important; }
+      .kjr-test-grid { grid-template-columns: 1fr !important; }
+      .kjr-test-sidebar { display: none !important; }
+      .kjr-reviews { grid-template-columns: 1fr !important; }
+      .kjr-navlinks { display: none !important; }
     }
-    .reveal.visible > * { transform: translateY(0); opacity: 1; }
-    .fade-up {
-      transform: translateY(40px);
-      opacity: 0;
-      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s ease;
-    }
-    .fade-up.visible { transform: translateY(0); opacity: 1; }
-    .stagger > * {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .stagger.visible > *:nth-child(1) { transition-delay: 0ms; }
-    .stagger.visible > *:nth-child(2) { transition-delay: 80ms; }
-    .stagger.visible > *:nth-child(3) { transition-delay: 160ms; }
-    .stagger.visible > *:nth-child(4) { transition-delay: 240ms; }
-    .stagger.visible > *:nth-child(5) { transition-delay: 320ms; }
-    .stagger.visible > * { opacity: 1; transform: translateY(0); }
 
     /* ── Result visualization ───────────────────────────── */
     .result-top { display: grid; grid-template-columns: 340px 1fr; gap: 48px; align-items: start; margin-bottom: 40px; }
@@ -972,6 +776,8 @@ function html() {
     .archetype-showcase { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 0 clamp(20px,5vw,80px); max-width: 1180px; margin: 0 auto; }
     .arch-card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 12px; text-align: center; transition: border-color .25s, transform .25s; }
     .arch-card:hover { border-color: rgba(240,237,232,.28); transform: translateY(-3px); }
+    .kjr-arch-slide:hover { transform: translateY(-6px); box-shadow: 0 14px 40px rgba(99,102,241,0.20); }
+    .kjr-cta-link:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(99,102,241,0.55) !important; }
     .arch-card-img { background: #fff; border-radius: 10px; margin-bottom: 10px; height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .arch-card-img img { height: 100%; width: auto; max-width: 100%; object-fit: contain; display: block; }
     .arch-card h3 { font-size: 17px; font-weight: 400; margin: 0 0 3px; }
@@ -1048,11 +854,8 @@ function html() {
   </style>
 </head>
 <body>
-  <div id="scroll-progress"></div>
-  <div id="cursor"></div>
-  <div id="cursor-dot"></div>
   <div id="app"></div>
-  <div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(20,18,24,0.97);backdrop-filter:blur(12px);border-top:1px solid rgba(240,237,232,0.1);padding:16px clamp(20px,5vw,60px);align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap"><p style="font-size:13px;color:rgba(240,237,232,0.54);margin:0;line-height:1.5;max-width:680px">Мы используем cookies для работы сайта. Ответы теста хранятся только в вашем браузере. <a href="/legal/cookies" id="cookie-link" style="color:#f03eb2">Подробнее</a></p><button id="cookie-accept" style="flex-shrink:0;background:#f03eb2;color:#000;border:none;border-radius:99px;padding:10px 24px;font-size:13px;font-weight:600;cursor:pointer">Принять</button></div>
+  <div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(30,27,46,0.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,0.10);padding:16px clamp(16px,4vw,40px)"><div style="max-width:1000px;margin:0 auto;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between"><p style="font-size:13px;line-height:1.6;color:rgba(240,237,248,0.70);max-width:640px;margin:0">Мы используем cookies для улучшения работы сайта. Данные теста хранятся только в вашем браузере. <a href="/legal/cookies" id="cookie-link" style="color:#818cf8;font-weight:600">Подробнее</a></p><button id="cookie-accept" style="flex:0 0 auto;background:#6366f1;color:#fff;border:none;font-family:inherit;font-weight:700;font-size:14px;padding:10px 24px;border-radius:8px;cursor:pointer">Принять</button></div></div>
   <script>
     const TEST_CASES = ${JSON.stringify(testCases)};
     const SCALE_KEYS = ${JSON.stringify(scaleKeys)};
@@ -1131,8 +934,7 @@ function html() {
     window.addEventListener("popstate", () => { _navigating = false; render(); });
 
     function shell(content) {
-      const now = new Date();
-      return '<header class="top"><a class="brand" href="/" data-link><span>Какой я родитель</span><small>тест · родители детей 6–17 лет</small></a><div class="header-meta">Разработан с психологом · экспериментальная методика</div><nav class="nav"><a href="/#methodology" data-link>Методика</a><a href="/#about" data-link>Авторы</a><a class="primary" href="/#test" data-link>Пройти тест →</a></nav></header><main style="padding-top:80px">' + content + '</main><nav class="bottom-nav"><a href="/#why" data-link>Зачем</a><a href="/#methodology" data-link>Методика</a><a href="/#about" data-link>Авторы</a><a href="/#test" data-link class="active">Пройти тест</a></nav>';
+      return '<nav class="kjr-nav"><a class="kjr-brand" href="/" data-link><span>Какой я родитель</span><small>тест · дети 6–17 лет</small></a><div class="kjr-navlinks"><a href="/" data-link>Главная</a></div><button class="kjr-btn" onclick="navigate(\'/\')">Пройти тест →</button></nav><main style="padding-top:0">' + content + '</main><footer style="margin:0 24px;padding:32px clamp(20px,4vw,40px);border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center"><span style="font-size:12px;color:var(--muted)">© 2026 ООО «Интеллект Университет» · ИНН 9703019107</span><a href="/" data-link style="font-size:12px;color:var(--muted)">galya.chooru@gmail.com</a></footer>';
     }
 
     function legalArticle(title, eyebrow, sections) {
@@ -1191,9 +993,135 @@ function html() {
     }
 
     function home() {
-      const questionCards = REACTION_QUESTIONS.map(item => '<div class="row qa"><span class="num">0' + item.number + '</span><div><h3>' + escapeHtml(item.title) + '</h3><p>' + escapeHtml(item.text) + '</p></div></div>').join("");
-      const archetypeShowcase = '<section class="section" id="archetypes" style="padding-top:44px;padding-bottom:44px"><div class="section-inner"><div class="section-header" style="margin-bottom:32px"><div><p class="kicker" style="color:var(--pink)">шесть архетипов</p><h2 style="margin:0">Каким родителем вы становитесь под давлением</h2></div><p style="color:var(--muted);line-height:1.7">У каждого своя сила и слепая зона. Тест покажет ваш ведущий архетип — и второй, если они близки.</p></div><div class="archetype-showcase">' + ['director','anchor','mentor','guardian','partner','peacemaker'].map(k => { const a = ARCHETYPES[k]; return '<div class="arch-card"><div class="arch-card-img"><img src="' + a.image + '" alt="' + escapeHtml(a.name) + '" loading="lazy" /></div><h3>' + escapeHtml(a.name) + '</h3><p>' + escapeHtml(a.tagline) + '</p></div>'; }).join('') + '</div></div></section><hr class="divider">';
-      return shell('<section class="hero"><p class="hero-eyebrow">Тест на родительский архетип · Шесть ситуаций</p><h1>Когда ребёнок говорит <em style="white-space:nowrap">«не хочу»</em>,<br>вы реагируете <em>раньше</em>,<br>чем думаете</h1><div class="hero-bottom"><p class="hero-lead">Узнайте свой родительский архетип — Дирижёр, Опора, Наставник, Защитник или Партнёр — и какую стратегию вы выбираете под давлением. Шесть ситуаций без подсказок правильного ответа и честный разбор ваших решений.</p><div class="hero-actions"><button class="button" data-start>Пройти тест — 10 минут →</button><p class="fine" style="text-align:right">без регистрации · только в этом браузере</p></div></div><div class="chips"><span class="chip c-pink"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> границы</span><span class="chip c-mint"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> контакт</span><span class="chip c-pink"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg> самостоятельность</span><span class="chip c-mint"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> без регистрации</span><span class="chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> 200+ родителей</span></div></section><hr class="divider">' + archetypeShowcase + '<section class="section" id="why"><div class="section-inner"><div class="section-header fade-up"><div><p class="kicker" style="color:var(--pink)">зачем проходить</p><h2>Что изменится после этих 10 минут</h2></div><p style="max-width:400px">Это не ещё один тест «для интереса». Способ заметить свой автоматический способ реагировать — раньше, чем он сработает в следующий раз.</p></div><div class="value-grid stagger"><div class="value-item"><p class="value-num">01</p><h3>Понимание своей реакции</h3><p>Вы увидите, что чаще выбираете: удержать правило, сохранить контакт, дать самостоятельность — и в каких ситуациях это работает против вас.</p></div><div class="value-item"><p class="value-num">02</p><h3>Конкретные фразы</h3><p>Готовые формулировки для следующего разговора — не «быть терпеливее», а слова, которые можно сказать сегодня вечером.</p></div><div class="value-item"><p class="value-num">03</p><h3>Пауза 2–3 секунды</h3><p>Не план на месяц, а одно изменение в реакции на «не хочу». Этой паузы достаточно, чтобы выбрать реакцию, а не действовать на автомате.</p></div></div></div></section><hr class="divider"><section class="section"><div class="section-inner"><p class="kicker fade-up" style="color:var(--mint)">отзывы</p><h2 class="fade-up" style="margin-bottom:40px">Что говорят родители</h2><div class="testimonials-grid stagger"><div class="testimonial"><blockquote>«Я думала, что я спокойный родитель. Тест показал, что я жёстко держу правила там, где ребёнку нужен просто контакт. Это было неожиданно и очень полезно.»</blockquote><footer>— Анна, мама сына 9 лет</footer></div><div class="testimonial"><blockquote>«Понравилось, что нет правильных ответов. Ситуации реальные — я несколько раз узнал себя. Фразы из результата использую до сих пор.»</blockquote><footer>— Дмитрий, папа дочери 12 лет</footer></div><div class="testimonial"><blockquote>«Прошла за 8 минут в обеденный перерыв. Муж тоже прошёл — сравнивали профили и поняли, почему у нас разные реакции на одни ситуации.»</blockquote><footer>— Светлана, мама двоих, дети 7 и 14 лет</footer></div></div></div></section><hr class="divider"><details class="card"><summary><p class="kicker" style="color:var(--pink)">узнаваемо?</p><h2>Раздражение, чувство вины и мысль «я всё делаю неправильно» — это сигнал, а не диагноз</h2></summary><div class="rows"><div class="row"><p>Фрустрация и вина чаще всего появляются после — когда вы уже отреагировали и прокручиваете ситуацию заново. Этот тест работает с моментом до: что вы выбираете, когда решение еще не принято.</p></div><div class="row"><p>Цель не «делать всё правильно», а замечать свой способ реагировать достаточно рано, чтобы у вас был выбор, а не только автоматизм.</p></div></div></details><section class="section" style="padding-top:48px;padding-bottom:48px"><div class="section-inner"><div class="grid stagger" style="margin:0"><details class="card"><summary><h2>Что делает тест</h2></summary><p>Показывает не «какой вы родитель», а какие решения чаще появляются под давлением: удержать правило, поддержать контакт, дать выбор, проверить среду.</p></details><details class="card light"><summary><h2>Честное ограничение</h2></summary><p>Методика находится на этапе разработки и апробации. Это не психологическая диагностика и не медицинское заключение. «Карта автоматических реакций» — образ для удобства чтения, а не клинический термин.</p></details></div></div></section><section class="section" style="padding-bottom:40px"><div class="section-inner"><div class="section-header fade-up" style="margin-bottom:28px"><div><p class="kicker">прежде чем реагировать</p><h2>Пять вопросов за&nbsp;3 секунды</h2></div><p style="max-width:360px">Это не тест на правильность прошлых решений, а инструмент для следующего раза.</p></div></div><div class="q-slider"><div class="q-track">' + REACTION_QUESTIONS.map((item,i)=>'<div class="q-card"><span class="q-num">0'+(i+1)+'</span><h3>'+escapeHtml(item.title)+'</h3><p>'+escapeHtml(item.text)+'</p></div>').join('') + '</div></div><div style="padding:0 clamp(20px,5vw,80px) 8px"><p class="fine" style="color:rgba(240,237,232,.28)">Это рамка для размышления, а не алгоритм с гарантированным результатом.</p></div></section><details class="card"><summary><p class="kicker" style="color:var(--mint)">что будет в результате</p><h2>Ваш родительский архетип, карта реакций по 7 шкалам — и три коротких шага, что с этим делать.</h2></summary><div class="rows"><div class="row"><h3>1. Сразу</h3><p>Готовые фразы для следующего разговора с ребенком, под вашу зону внимания.</p></div><div class="row"><h3>2. На неделю</h3><p>Один маленький эксперимент: в следующий раз, когда услышите «не хочу», сначала задайте один из пяти вопросов выше.</p></div><div class="row"><h3>3. Дальше</h3><p>Подборка статей и книг под ваш профиль.</p></div></div><p class="fine">Эти шаги — общие практические подсказки, а не индивидуальные рекомендации.</p></details><section class="article"><p class="kicker" style="color:var(--blue)">пример</p><h2>Так выглядит результат</h2>' + resultPage(true) + '</section><div class="cta" style="margin:48px 0"><button class="button" data-start>Пройти тест за 10 минут</button><span class="fine">Данные сохраняются только в этом браузере.</span></div>' + methodologyPage() + aboutPage() + '<section id="test" class="article">' + testSection() + '</section><footer style="padding:60px 40px 100px;border-top:1px solid var(--line)"><div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px;margin-bottom:32px"><div><p class="kicker" style="color:var(--muted);margin-bottom:8px">Какой я родитель</p><p class="fine">Экспериментальная методика · 2026</p></div><div style="text-align:right"><p class="fine" style="margin-bottom:12px">Остались вопросы?</p><a class="button secondary" href="mailto:galya.chooru@gmail.com" style="font-size:14px;height:44px;padding:0 24px">Связаться с нами</a></div></div><div style="display:flex;flex-wrap:wrap;gap:16px;padding-top:24px;border-top:1px solid var(--line)"><a href="/legal/privacy" data-link style="font-size:12px;color:var(--muted);text-decoration:none;hover:color:var(--text)">Политика персональных данных</a><a href="/legal/consent" data-link style="font-size:12px;color:var(--muted);text-decoration:none">Согласие на обработку данных</a><a href="/legal/cookies" data-link style="font-size:12px;color:var(--muted);text-decoration:none">Политика cookies</a><a href="/legal/company" data-link style="font-size:12px;color:var(--muted);text-decoration:none">Реквизиты</a></div></footer>');
+      const archetypeData = [
+        { key:'director', name:'Дирижёр', desc:'Контроль как язык любви' },
+        { key:'anchor', name:'Опора', desc:'Тащит всё на себе, улыбаясь' },
+        { key:'mentor', name:'Наставник', desc:'Растит самостоятельного человека' },
+        { key:'guardian', name:'Защитник', desc:'Любит так сильно, что тревожно' },
+        { key:'partner', name:'Партнёр', desc:'Скорее друг, чем родитель' },
+        { key:'peacemaker', name:'Миротворец', desc:'Ссора для него невыносима' },
+      ];
+      const archetypeCards = archetypeData.map(a =>
+        '<div class="kjr-arch-slide" style="flex:0 0 auto;width:210px;scroll-snap-align:start;background:#fff;border-radius:16px;border:1.5px solid rgba(99,102,241,0.10);overflow:hidden;transition:transform 0.3s ease,box-shadow 0.3s ease;cursor:grab">'
+        + '<div style="height:170px;background:linear-gradient(135deg,#f0eeff,#e8e6ff);overflow:hidden"><img src="/archetype-' + a.key + '.png" alt="' + escapeHtml(a.name) + '" style="width:100%;height:100%;object-fit:cover;object-position:center top" draggable="false"></div>'
+        + '<div style="padding:14px 16px"><div style="font-size:14px;font-weight:700;color:#1a1830">' + escapeHtml(a.name) + '</div><div style="margin-top:4px;font-size:11px;line-height:1.5;color:rgba(26,24,48,0.55)">' + escapeHtml(a.desc) + '</div></div>'
+        + '</div>'
+      ).join('');
+
+      const bentoCard = (num, title, text, extra) =>
+        '<div class="kjr-bcell" style="opacity:0;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:28px' + (extra || '') + '">'
+        + '<div style="font-size:11px;font-weight:700;color:#818cf8">' + num + '</div>'
+        + '<div style="margin-top:10px;font-size:17px;font-weight:700;color:#f0edf8">' + title + '</div>'
+        + '<p style="margin-top:8px;font-size:14px;line-height:1.7;color:rgba(240,237,248,0.50)">' + text + '</p></div>';
+
+      const reviewCards = [
+        { tag:'Дирижёр', quote:'«Я думала, что я спокойный родитель. Тест показал, что я жёстко держу правила там, где ребёнку нужен просто контакт.»', author:'— Анна, мама сына 9 лет' },
+        { tag:'Наставник', quote:'«Понравилось, что нет правильных ответов. Ситуации реальные — я несколько раз узнал себя.»', author:'— Дмитрий, папа дочери 12 лет' },
+        { tag:'Партнёр', quote:'«Прошла за 8 минут. Муж тоже прошёл — поняли, почему у нас разные реакции на одни ситуации.»', author:'— Светлана, дети 7 и 14 лет' },
+      ].map(r =>
+        '<div style="background:#fff;border-radius:16px;padding:24px;border:1px solid rgba(26,24,48,0.10);display:flex;flex-direction:column">'
+        + '<span style="align-self:flex-start;background:rgba(251,113,133,0.12);color:#fb7185;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;border-radius:99px;padding:5px 12px">' + escapeHtml(r.tag) + '</span>'
+        + '<p style="margin-top:16px;font-size:13px;line-height:1.75;color:#1a1830">' + escapeHtml(r.quote) + '</p>'
+        + '<div style="margin-top:16px;font-size:12px;font-weight:700;color:rgba(26,24,48,0.55)">' + escapeHtml(r.author) + '</div></div>'
+      ).join('');
+
+      const accItems = [
+        { title:'7 шкал измерения', body:'<p>Тест измеряет 7 параметров родительского стиля:</p><ul style="margin:10px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:7px"><li>Ответственность взрослого — кто отвечает за безопасность и решения</li><li>Эмоциональный контакт — насколько родитель слышит чувства ребёнка</li><li>Последовательность границ — правила работают или нет</li><li>Поддержка автономии — даёте ли вы ребёнку выбор</li><li>Толерантность к конфликту — как вы переносите напряжение</li><li>Гибкость — можете ли вы менять решение без угрозы авторитету</li><li>Отличие трудного от опасного — не путаете ли вы дискомфорт с угрозой</li></ul>' },
+        { title:'Академическая база', body:'<p>Методика основана на:</p><ul style="margin:10px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:7px"><li>Теория привязанности (Боулби, Эйнсворт)</li><li>Концепция авторитетного родительства (Диана Баумринд)</li><li>Исследования эмоциональной регуляции и стресс-реакций</li></ul><p style="margin-top:12px">Не является клиническим или диагностическим инструментом. Экспериментальная методика, 2026.</p>' },
+        { title:'Конфиденциальность', body:'<p>Ваши ответы хранятся только в вашем браузере (localStorage). Мы не передаём данные третьим лицам и не идентифицируем пользователей.</p><p style="margin-top:12px">Анонимная агрегированная статистика помогает улучшать методику.</p>' },
+      ];
+      const accordionHTML = accItems.map((ac, i) =>
+        '<div style="background:#fff;border-radius:16px;border:1px solid rgba(26,24,48,0.10);overflow:hidden">'
+        + '<div onclick="(function(el){var b=el.nextElementSibling;var open=b.style.maxHeight!==\\x270px\\x27&&b.style.maxHeight!==\\x27\\x27;b.style.maxHeight=open?\\x270px\\x27:(b.scrollHeight+\\x27px\\x27);b.style.opacity=open?\\x270\\x27:\\x271\\x27;el.querySelector(\\x27span\\x27).style.transform=open?\\x27rotate(0)\\x27:\\x27rotate(180deg)\\x27})(this)" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px;cursor:pointer">'
+        + '<span style="font-size:17px;font-weight:700;color:#1a1830">' + escapeHtml(ac.title) + '</span>'
+        + '<span style="flex:0 0 auto;width:28px;height:28px;border-radius:99px;background:rgba(99,102,241,0.10);color:#6366f1;display:flex;align-items:center;justify-content:center;transition:transform 0.3s ease;font-size:14px">▾</span></div>'
+        + '<div style="max-height:0;opacity:0;overflow:hidden;transition:max-height 0.4s ease,opacity 0.3s ease"><div style="padding:0 24px 22px;font-size:14px;line-height:1.7;color:rgba(26,24,48,0.65)">' + ac.body + '</div></div></div>'
+      ).join('');
+
+      return (
+        // NAV
+        '<nav class="kjr-nav">'
+        + '<a class="kjr-brand" href="/" data-link><span>Какой я родитель</span><small>тест · дети 6–17 лет</small></a>'
+        + '<div class="kjr-navlinks"><a href="#methodology">Методика</a><a href="#authors">Авторы</a></div>'
+        + '<a href="#test" style="font-size:13px;font-weight:700;background:#6366f1;color:#fff;padding:9px 20px;border-radius:10px;display:inline-block">Начать тест</a>'
+        + '</nav>'
+
+        // HERO
+        + '<header class="kjr-hero" style="position:relative;padding:clamp(70px,11vw,140px) clamp(20px,5vw,40px) clamp(80px,10vw,120px);overflow:hidden">'
+        + '<div id="kjr-glow1" style="position:absolute;width:600px;height:600px;top:-120px;left:-80px;background:radial-gradient(circle,rgba(99,102,241,0.18) 0%,transparent 70%);pointer-events:none"></div>'
+        + '<div id="kjr-glow2" style="position:absolute;width:440px;height:440px;bottom:-60px;right:-40px;background:radial-gradient(circle,rgba(251,113,133,0.16) 0%,transparent 70%);pointer-events:none"></div>'
+        + '<div id="kjr-dots" style="position:absolute;inset:0;opacity:0;background-image:radial-gradient(rgba(255,255,255,0.06) 1px,transparent 1px);background-size:32px 32px;-webkit-mask:radial-gradient(ellipse 80% 60% at 50% 50%,black 40%,transparent);mask:radial-gradient(ellipse 80% 60% at 50% 50%,black 40%,transparent);pointer-events:none"></div>'
+        + '<div style="position:relative;max-width:880px;margin:0 auto;text-align:center">'
+        + '<div id="kjr-eyebrow" style="opacity:0;display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.30);color:#818cf8;border-radius:99px;padding:7px 16px;font-size:12px;font-weight:600"><span style="width:6px;height:6px;border-radius:99px;background:#818cf8;display:inline-block"></span>экспериментальный тест · 6 ситуаций</div>'
+        + '<h1 id="kjr-h1" style="opacity:0;margin-top:26px;font-weight:800;font-size:clamp(40px,5.5vw,76px);letter-spacing:-0.035em;line-height:1.04">Когда ребёнок говорит <span style="color:#fb7185;font-style:italic">«не хочу»</span>, вы реагируете раньше, чем думаете</h1>'
+        + '<p id="kjr-lead" style="opacity:0;max-width:520px;margin:24px auto 0;font-size:17px;line-height:1.7;color:rgba(240,237,248,0.50)">Шесть реальных ситуаций без правильных ответов — и честный разбор того, как именно вы реагируете под давлением.</p>'
+        + '<div id="kjr-cta" style="opacity:0;margin-top:36px"><a href="#test" class="kjr-cta-link" style="display:inline-block;background:#6366f1;color:#fff;font-weight:700;font-size:16px;border-radius:12px;padding:14px 28px;box-shadow:0 0 32px rgba(99,102,241,0.35);transition:transform 0.25s ease,box-shadow 0.25s ease">Пройти тест — 10 минут →</a>'
+        + '<p style="margin-top:16px;font-size:12px;color:rgba(240,237,248,0.50)">без регистрации · данные только в браузере</p></div>'
+        + '</div></header>'
+
+        // CARD 1: ARCHETYPES
+        + '<section class="kjr-card kjr-card-light kjr-card-pad" style="opacity:0">'
+        + '<div style="max-width:620px;margin:0 auto;text-align:center"><p class="kicker">Шесть архетипов</p><h2 style="margin-top:14px;font-weight:800;font-size:clamp(26px,3.2vw,42px);letter-spacing:-0.025em;line-height:1.08;color:#1a1830">Каким родителем вы становитесь под давлением</h2><p style="margin-top:16px;font-size:16px;line-height:1.7;color:rgba(26,24,48,0.55)">Тест покажет ваш доминирующий паттерн реакции — не характер, а автоматику.</p></div>'
+        + '<div class="kjr-slider" style="margin-top:40px;display:flex;gap:16px;overflow-x:auto;padding:4px 4px 12px;scroll-snap-type:x mandatory">' + archetypeCards + '</div>'
+        + '<p style="margin-top:8px;text-align:center;font-size:12px;color:rgba(26,24,48,0.40)">← потяните, чтобы посмотреть все →</p>'
+        + '</section>'
+
+        // CARD 2: WHY
+        + '<section class="kjr-card kjr-card-gradient kjr-card-pad" style="opacity:0">'
+        + '<div style="position:absolute;width:420px;height:420px;top:-120px;right:-100px;background:radial-gradient(circle,rgba(99,102,241,0.18) 0%,transparent 70%);pointer-events:none"></div>'
+        + '<div style="position:relative;max-width:1000px;margin:0 auto">'
+        + '<p class="kicker kicker-coral">Зачем проходить</p>'
+        + '<h2 style="margin-top:14px;font-weight:800;font-size:clamp(26px,3.2vw,42px);letter-spacing:-0.025em;line-height:1.08;color:#f0edf8">Что изменится после 10 минут</h2>'
+        + '<div class="kjr-bento" style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:12px">'
+        + bentoCard('01','Понимание своей реакции','Что именно вы делаете под давлением — и в каких ситуациях это работает против вас.')
+        + bentoCard('02','Конкретные слова','Не «быть терпеливее», а фразы, которые можно сказать ребёнку сегодня вечером.')
+        + '<div class="kjr-bcell kjr-bento-wide" style="opacity:0;grid-column:span 2;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:28px;display:flex;flex-wrap:wrap;gap:28px;align-items:center"><div style="min-width:160px"><div id="kjr-counter" style="font-size:64px;font-weight:800;letter-spacing:-0.03em;color:#fb7185;line-height:1">0+</div><div style="margin-top:6px;font-size:14px;color:rgba(240,237,248,0.50)">родителей уже прошли</div></div><div style="flex:1;min-width:220px"><div style="font-size:11px;font-weight:700;color:#818cf8">03</div><div style="margin-top:10px;font-size:17px;font-weight:700;color:#f0edf8">Пауза 2–3 секунды</div><p style="margin-top:8px;font-size:14px;line-height:1.7;color:rgba(240,237,248,0.50)">Одно изменение в реакции — достаточно, чтобы выбрать, а не действовать на автомате.</p></div></div>'
+        + '</div></div></section>'
+
+        // CARD 3: REVIEWS
+        + '<section class="kjr-card kjr-card-light kjr-card-pad" style="opacity:0">'
+        + '<p class="kicker kicker-coral">Отзывы</p>'
+        + '<h2 style="margin-top:14px;font-weight:800;font-size:clamp(26px,3.2vw,42px);letter-spacing:-0.025em;line-height:1.08;color:#1a1830">Что говорят родители</h2>'
+        + '<div class="kjr-reviews" style="margin-top:32px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px">' + reviewCards + '</div>'
+        + '</section>'
+
+        // CARD 4: METHODOLOGY accordion
+        + '<section id="methodology" class="kjr-card kjr-card-light kjr-card-pad" style="opacity:0">'
+        + '<p class="kicker">Методика</p>'
+        + '<h2 style="margin-top:14px;font-weight:800;font-size:clamp(26px,3.2vw,42px);letter-spacing:-0.025em;line-height:1.08;color:#1a1830">Как работает тест</h2>'
+        + '<div style="margin-top:32px;max-width:840px;display:flex;flex-direction:column;gap:12px">' + accordionHTML + '</div>'
+        + '</section>'
+
+        // CTA
+        + '<section id="cta" class="kjr-card kjr-card-gradient kjr-card-pad" style="opacity:0;position:relative;border-radius:28px 28px 0 0;margin-bottom:0">'
+        + '<div style="position:absolute;width:560px;height:560px;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(99,102,241,0.20) 0%,transparent 65%);pointer-events:none"></div>'
+        + '<div style="position:relative;max-width:640px;margin:0 auto;text-align:center">'
+        + '<h2 style="font-weight:800;font-size:clamp(26px,3.2vw,42px);letter-spacing:-0.025em;line-height:1.08;color:#f0edf8">Узнайте свой родительский архетип</h2>'
+        + '<p style="margin-top:16px;font-size:16px;color:rgba(240,237,248,0.55)">Шесть ситуаций · 10 минут · без регистрации</p>'
+        + '<a href="#test" class="kjr-cta-link" style="display:inline-block;margin-top:32px;background:#6366f1;color:#fff;font-weight:700;font-size:16px;padding:16px 40px;border-radius:12px;box-shadow:0 0 32px rgba(99,102,241,0.35);transition:transform 0.25s ease,box-shadow 0.25s ease">Пройти тест бесплатно →</a>'
+        + '<div style="margin-top:28px;display:flex;flex-wrap:wrap;justify-content:center;gap:10px">'
+        + '<span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);color:rgba(240,237,248,0.75);border-radius:99px;padding:9px 16px;font-size:13px;font-weight:500">🔒 без регистрации</span>'
+        + '<span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);color:rgba(240,237,248,0.75);border-radius:99px;padding:9px 16px;font-size:13px;font-weight:500">⏱ 10 минут</span>'
+        + '<span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);color:rgba(240,237,248,0.75);border-radius:99px;padding:9px 16px;font-size:13px;font-weight:500">💾 данные только у вас</span>'
+        + '</div></div></section>'
+
+        // FOOTER
+        + '<footer id="authors" style="margin:0 24px;background:#0e0c18;padding:40px clamp(20px,4vw,40px);border-top:1px solid rgba(255,255,255,0.07)">'
+        + '<div style="max-width:1000px;margin:0 auto;display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between">'
+        + '<div><div style="font-weight:700;font-size:15px">Какой я родитель</div><div style="margin-top:6px;font-size:12px;color:rgba(240,237,248,0.50)">Экспериментальная методика · 2026</div></div>'
+        + '<div style="display:flex;flex-wrap:wrap;gap:16px 24px;font-size:12px;color:rgba(240,237,248,0.50);max-width:560px">'
+        + '<a href="/legal/privacy" data-link>Политика конфиденциальности</a>'
+        + '<a href="/legal/consent" data-link>Согласие на обработку данных</a>'
+        + '<a href="/legal/cookies" data-link>Политика Cookies</a>'
+        + '<a href="/legal/company" data-link>Реквизиты компании</a>'
+        + '<a href="mailto:galya.chooru@gmail.com">galya.chooru@gmail.com</a>'
+        + '</div></div>'
+        + '<div style="max-width:1000px;margin:28px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,0.07);font-size:12px;color:rgba(240,237,248,0.40)">© 2026 ООО «Интеллект Университет» · ИНН 9703019107</div>'
+        + '</footer>'
+
+        // TEST section
+        + '<section id="test" class="article" style="padding:0 clamp(20px,5vw,56px) 60px">' + testSection() + '</section>'
+      );
     }
 
     function start() {
@@ -1499,6 +1427,40 @@ function html() {
       return String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char]));
     }
 
+    function initHomeGsap() {
+      (function() {
+        function init() {
+          var g = window.gsap;
+          if (!g) { setTimeout(init, 120); return; }
+          if (window.ScrollTrigger) g.registerPlugin(window.ScrollTrigger);
+          var tl = g.timeline();
+          tl.fromTo("#kjr-eyebrow",{opacity:0,y:20},{opacity:1,y:0,duration:0.6,ease:"power2.out"},0)
+            .fromTo("#kjr-h1",{opacity:0,y:30},{opacity:1,y:0,duration:0.7,ease:"power2.out"},0.15)
+            .fromTo("#kjr-lead",{opacity:0,y:20},{opacity:1,y:0,duration:0.6,ease:"power2.out"},0.30)
+            .fromTo("#kjr-cta",{opacity:0,scale:0.95},{opacity:1,scale:1,duration:0.6,ease:"power2.out"},0.45)
+            .to("#kjr-dots",{opacity:0.6,duration:0.8,ease:"power2.out"},0.60);
+          g.utils.toArray(".kjr-card").forEach(function(card) {
+            g.fromTo(card,{opacity:0,y:40},{opacity:1,y:0,duration:0.7,ease:"power2.out",
+              scrollTrigger:{trigger:card,start:"top 85%",once:true}});
+          });
+          if (window.ScrollTrigger) {
+            window.ScrollTrigger.create({trigger:".kjr-bento",start:"top 85%",once:true,onEnter:function() {
+              g.fromTo(".kjr-bcell",{opacity:0,y:20},{opacity:1,y:0,duration:0.6,stagger:0.1,ease:"power2.out"});
+              var el = document.getElementById("kjr-counter");
+              if (el) { var obj = {v:0}; g.to(obj,{v:200,duration:1.5,ease:"power2.out",onUpdate:function(){el.textContent=Math.round(obj.v)+"+";}}) }
+            }});
+          }
+          var hdr = document.querySelector(".kjr-hero");
+          if (hdr) { hdr.addEventListener("mousemove",function(e) {
+            var r = hdr.getBoundingClientRect(); var dx = (e.clientX-r.left)/r.width-0.5; var dy = (e.clientY-r.top)/r.height-0.5;
+            g.to("#kjr-glow1",{x:dx*40,y:dy*40,duration:0.3,ease:"power1.out"});
+            g.to("#kjr-glow2",{x:-dx*30,y:-dy*30,duration:0.3,ease:"power1.out"});
+          }); }
+        }
+        init();
+      })();
+    }
+
     let _navigating = false;
     function render(scrollToHash) {
       const path = window.location.pathname;
@@ -1507,6 +1469,7 @@ function html() {
       if (path === "/legal/cookies") { document.getElementById("app").innerHTML = shell(legalCookies()); window.scrollTo(0,0); return; }
       if (path === "/legal/company") { document.getElementById("app").innerHTML = shell(legalCompany()); window.scrollTo(0,0); return; }
       document.getElementById("app").innerHTML = home();
+      initHomeGsap();
   const hash = scrollToHash || (path.startsWith("/methodology") ? "#methodology" : path.startsWith("/about") ? "#about" : (path.startsWith("/test") || path.startsWith("/result") || path.startsWith("/demo-result")) ? "#test" : "");
   if (hash && _navigating) {
     const target = document.querySelector(hash);
@@ -1611,34 +1574,7 @@ function html() {
       });
     })();
 
-    // ── Custom cursor ──────────────────────────────────────
-    const cur = document.getElementById("cursor");
-    const curDot = document.getElementById("cursor-dot");
-    if (cur && window.matchMedia("(hover:hover)").matches) {
-      let mx = 0, my = 0, cx = 0, cy = 0;
-      document.addEventListener("mousemove", e => { mx = e.clientX; my = e.clientY; });
-      (function loop() {
-        cx += (mx - cx) * 0.12;
-        cy += (my - cy) * 0.12;
-        cur.style.left = cx + "px";
-        cur.style.top = cy + "px";
-        if (curDot) { curDot.style.left = mx + "px"; curDot.style.top = my + "px"; }
-        requestAnimationFrame(loop);
-      })();
-      document.addEventListener("mouseover", e => {
-        const t = e.target.closest("a,button,.option,.testimonial,.value-item");
-        if (t) cur.classList.add("hover"); else cur.classList.remove("hover");
-      });
-    }
-
-    // ── Scroll progress bar ────────────────────────────────
-    const prog = document.getElementById("scroll-progress");
-    if (prog) {
-      window.addEventListener("scroll", () => {
-        const h = document.documentElement.scrollHeight - window.innerHeight;
-        prog.style.width = (h > 0 ? (window.scrollY / h * 100) : 0) + "%";
-      }, { passive: true });
-    }
+    // cursor and scroll-progress removed in new design
 
     // ── Scroll reveal (IntersectionObserver) ───────────────
     function initReveal() {
