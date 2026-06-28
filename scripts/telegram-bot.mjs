@@ -263,9 +263,17 @@ async function handleUpdate(upd, appendToSheet, botUsername) {
   if (upd.message && upd.message.text) {
     const chatId = upd.message.chat.id;
     if (upd.message.text.startsWith("/start")) {
-      const s = { stage: "role", profile: {}, answers: [], msgId: null, botUsername };
-      sessions.set(chatId, s);
-      await editOrSend(chatId, s, roleStep());
+      const intro = "👋 Это тест <b>«Какой я родитель»</b>.\n\n"
+        + "Он не про то, хороший вы родитель или плохой. Он показывает вашу первую — автоматическую — реакцию на ребёнка в конфликте: ту, что срабатывает за секунду до того, как вы успели подумать.\n\n"
+        + "<b>6 реальных ситуаций · 7 шкал · 10–15 минут.</b> Без диагнозов и правильных ответов.\n\n"
+        + "Авторы — Галина Яновская (психолог, сооснователь «Интеллект Университет») и Людмила Экхардт (методолог, психолог развития).\n\n"
+        + "Нажмите «Пройти тест» — он откроется прямо здесь. В конце увидите свой архетип и полный разбор по 7 шкалам.";
+      await tg("sendMessage", {
+        chat_id: chatId,
+        text: intro,
+        parse_mode: "HTML",
+        reply_markup: kb([[{ text: "🧭 Пройти тест", web_app: { url: SITE } }]]),
+      });
     }
     return;
   }

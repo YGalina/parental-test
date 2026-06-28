@@ -2,8 +2,43 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
+import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
+
+// ── Telegram Mini App: проверка подписи initData и подписки на канал ──────────
+function verifyTelegramInitData(initData) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token || !initData) return null;
+  try {
+    const params = new URLSearchParams(initData);
+    const hash = params.get("hash");
+    if (!hash) return null;
+    params.delete("hash");
+    const dataCheckString = [...params.entries()]
+      .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+      .map(([k, v]) => `${k}=${v}`)
+      .join("\n");
+    const secretKey = crypto.createHmac("sha256", "WebAppData").update(token).digest();
+    const calcHash = crypto.createHmac("sha256", secretKey).update(dataCheckString).digest("hex");
+    if (calcHash !== hash) return null;
+    const authDate = Number(params.get("auth_date") || 0);
+    if (authDate && Date.now() / 1000 - authDate > 86400) return null; // initData старше суток
+    return JSON.parse(params.get("user") || "null");
+  } catch { return null; }
+}
+
+async function telegramIsSubscribed(userId) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const channel = process.env.TELEGRAM_CHANNEL;
+  if (!token || !channel) return true; // гейт выключен, если канал не задан
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/getChatMember?chat_id=${encodeURIComponent(channel)}&user_id=${userId}`);
+    const j = await res.json();
+    const status = j?.result?.status;
+    return !!status && !["left", "kicked"].includes(status);
+  } catch (e) { console.error("getChatMember error:", e.message); return false; }
+}
 
 // Load .env.local if present (local dev)
 try {
@@ -429,6 +464,7 @@ function html() {
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <style>
@@ -923,6 +959,51 @@ function html() {
     const SESSION_KEY = "rp-recovery-session-v1";
     const RESULT_KEY = "rp-recovery-result-v1";
     const TEXT_ANALYSIS_KEY = "rp-text-analysis-v1";
+    const TG_CHANNEL = "thinking_kids";
+
+    // ── Telegram Mini App ──────────────────────────────────────────────
+    var TG = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
+    var IS_MINIAPP = !!(TG && TG.initData && TG.initData.length > 10);
+    if (TG) { try { TG.ready(); TG.expand(); } catch (e) {} }
+
+    function tgOpenChannel() {
+      if (TG && TG.openTelegramLink) TG.openTelegramLink("https://t.me/" + TG_CHANNEL);
+      else window.open("https://t.me/" + TG_CHANNEL, "_blank");
+    }
+
+    function tgRevealResult() {
+      try { localStorage.setItem("kjr_tg_gate", "1"); } catch (e) {}
+      var g = document.getElementById("kjr-gate"); if (g) g.style.display = "none";
+      var l = document.getElementById("kjr-locked");
+      if (l) {
+        l.style.display = "flex";
+        var els = l.querySelectorAll(".kjr-rc");
+        for (var i = 0; i < els.length; i++) { els[i].style.opacity = "1"; els[i].style.transform = "none"; }
+        if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+        l.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+
+    // Нажатие «Я подписался»: в мини-аппе — реальная проверка, на сайте — честный гейт
+    function tgGateCheck(btn) {
+      if (!IS_MINIAPP) { tgRevealResult(); return; }
+      if (btn) { btn.disabled = true; btn.textContent = "Проверяем подписку…"; }
+      fetch("/api/tg-verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ initData: TG.initData }) })
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if (d && d.ok && d.subscribed) { tgRevealResult(); }
+          else {
+            if (btn) { btn.disabled = false; btn.textContent = "✅ Я подписался — показать разбор"; }
+            var msg = "Подписка пока не видна. Подпишитесь на канал и нажмите ещё раз.";
+            if (TG && TG.showAlert) TG.showAlert(msg); else alert(msg);
+          }
+        })
+        .catch(function(){
+          if (btn) { btn.disabled = false; btn.textContent = "✅ Я подписался — показать разбор"; }
+          var m = "Не удалось проверить подписку. Попробуйте ещё раз.";
+          if (TG && TG.showAlert) TG.showAlert(m); else alert(m);
+        });
+    }
 
     let state = loadState();
 
@@ -1493,8 +1574,8 @@ function html() {
         + '<h2 style="margin-top:10px;font-weight:800;font-size:clamp(24px,3vw,36px);letter-spacing:-0.02em;line-height:1.1;color:#f0edf8">Полный разбор открывается после подписки</h2>'
         + '<p style="margin-top:14px;font-size:16px;line-height:1.65;color:rgba(240,237,248,0.55);max-width:500px;margin-left:auto;margin-right:auto">Радар по 7 шкалам, расшифровка каждой и шаги на эту неделю — всё ниже. В канале @thinking_kids вы найдёте практики по вашему архетипу и разборы реальных ситуаций.</p>'
         + '<div style="margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center">'
-        + '<a href="https://t.me/thinking_kids" target="_blank" rel="noreferrer" style="display:inline-flex;align-items:center;gap:10px;background:#6366f1;color:#fff;font-weight:700;font-size:15px;padding:14px 28px;border-radius:14px;text-decoration:none;box-shadow:0 0 28px rgba(99,102,241,0.35)">1 · Подписаться на @thinking_kids →</a>'
-        + '<button onclick="(function(){try{localStorage.setItem(\\x27kjr_tg_gate\\x27,\\x271\\x27)}catch(e){}var g=document.getElementById(\\x27kjr-gate\\x27);if(g)g.style.display=\\x27none\\x27;var l=document.getElementById(\\x27kjr-locked\\x27);if(l){l.style.display=\\x27flex\\x27;var els=l.querySelectorAll(\\x27.kjr-rc\\x27);for(var i=0;i<els.length;i++){els[i].style.opacity=\\x271\\x27;els[i].style.transform=\\x27none\\x27}if(window.ScrollTrigger)window.ScrollTrigger.refresh();l.scrollIntoView({behavior:\\x27smooth\\x27})}})()" style="font-family:inherit;display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);color:#f0edf8;font-weight:700;font-size:15px;padding:14px 28px;border-radius:14px;cursor:pointer">2 · ✅ Я подписался — показать разбор</button>'
+        + '<a href="https://t.me/thinking_kids" target="_blank" rel="noreferrer" onclick="tgOpenChannel();return false;" style="display:inline-flex;align-items:center;gap:10px;background:#6366f1;color:#fff;font-weight:700;font-size:15px;padding:14px 28px;border-radius:14px;text-decoration:none;box-shadow:0 0 28px rgba(99,102,241,0.35)">1 · Подписаться на @thinking_kids →</a>'
+        + '<button onclick="tgGateCheck(this)" style="font-family:inherit;display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);color:#f0edf8;font-weight:700;font-size:15px;padding:14px 28px;border-radius:14px;cursor:pointer">2 · ✅ Я подписался — показать разбор</button>'
         + '</div>'
         + '<p style="margin-top:16px;font-size:12px;color:rgba(240,237,248,0.30)">Архетип уже выше. Полный профиль по 7 шкалам — после подписки.</p>'
         + '</section>';
@@ -1846,6 +1927,28 @@ const resultsLogPath = path.join(root, "data", "results.jsonl");
 
 const server = http.createServer((req, res) => {
   if ((req.url.startsWith("/authors/") || req.url.startsWith("/archetype-") || req.url === "/favicon.svg" || req.url === "/favicon.ico") && serveAsset(req, res)) return;
+  if (req.method === "POST" && req.url === "/api/tg-verify") {
+    let body = "";
+    req.on("data", chunk => { body += chunk; if (body.length > 20000) req.destroy(); });
+    req.on("end", async () => {
+      try {
+        const { initData } = JSON.parse(body || "{}");
+        const user = verifyTelegramInitData(initData);
+        if (!user || !user.id) {
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ ok: false, reason: "bad_signature" }));
+          return;
+        }
+        const subscribed = await telegramIsSubscribed(user.id);
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: true, subscribed, userId: user.id, firstName: user.first_name || "" }));
+      } catch {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false }));
+      }
+    });
+    return;
+  }
   if (req.method === "POST" && req.url === "/api/submit-result") {
     let body = "";
     req.on("data", chunk => { body += chunk; if (body.length > 200000) req.destroy(); });
