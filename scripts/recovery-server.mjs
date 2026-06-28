@@ -1069,7 +1069,7 @@ function html() {
         + '<div id="kjr-eyebrow" style="opacity:0;display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.30);color:#818cf8;border-radius:99px;padding:7px 16px;font-size:12px;font-weight:600"><span style="width:6px;height:6px;border-radius:99px;background:#818cf8;display:inline-block"></span>экспериментальный тест · 6 ситуаций</div>'
         + '<h1 id="kjr-h1" style="opacity:0;margin-top:26px;font-weight:800;font-size:clamp(40px,5.5vw,76px);letter-spacing:-0.035em;line-height:1.04">Когда ребёнок говорит <span style="color:#fb7185;font-style:italic">«не хочу»</span>, вы реагируете раньше, чем думаете</h1>'
         + '<p id="kjr-lead" style="opacity:0;max-width:520px;margin:24px auto 0;font-size:17px;line-height:1.7;color:rgba(240,237,248,0.50)">Шесть реальных ситуаций без правильных ответов — и честный разбор того, как именно вы реагируете под давлением.</p>'
-        + '<div id="kjr-cta" style="opacity:0;margin-top:36px"><button onclick="start()" class="kjr-cta-link" style="display:inline-block;background:#6366f1;color:#fff;font-weight:700;font-size:16px;border-radius:12px;padding:14px 28px;box-shadow:0 0 32px rgba(99,102,241,0.35);transition:transform 0.25s ease,box-shadow 0.25s ease;border:none;cursor:pointer;font-family:inherit">Пройти тест — 10 минут →</button>'
+        + '<div id="kjr-cta" style="opacity:0;margin-top:36px"><button onclick="start()" class="kjr-cta-link" style="display:inline-block;background:#6366f1;color:#fff;font-weight:700;font-size:16px;border-radius:12px;padding:14px 28px;box-shadow:0 0 32px rgba(99,102,241,0.35);transition:transform 0.25s ease,box-shadow 0.25s ease;border:none;cursor:pointer;font-family:inherit">Пройти тест — 10–15 минут →</button>'
         + '<p style="margin-top:16px;font-size:12px;color:rgba(240,237,248,0.50)">без регистрации · данные только в браузере</p></div>'
         + '</div></header>'
 
@@ -1085,7 +1085,7 @@ function html() {
         + '<div style="position:absolute;width:420px;height:420px;top:-120px;right:-100px;background:radial-gradient(circle,rgba(99,102,241,0.18) 0%,transparent 70%);pointer-events:none"></div>'
         + '<div style="position:relative;max-width:1000px;margin:0 auto">'
         + '<p class="kicker kicker-coral">Зачем проходить</p>'
-        + '<h2 style="margin-top:14px;font-weight:800;font-size:clamp(26px,3.2vw,42px);letter-spacing:-0.025em;line-height:1.08;color:#f0edf8">Что изменится после 10 минут</h2>'
+        + '<h2 style="margin-top:14px;font-weight:800;font-size:clamp(26px,3.2vw,42px);letter-spacing:-0.025em;line-height:1.08;color:#f0edf8">Что изменится после 10–15 минут</h2>'
         + '<div class="kjr-bento" style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:12px">'
         + bentoCard('01','Понимание своей реакции','Что именно вы делаете под давлением — и в каких ситуациях это работает против вас.')
         + bentoCard('02','Конкретные слова','Не «быть терпеливее», а фразы, которые можно сказать ребёнку сегодня вечером.')
@@ -1111,11 +1111,11 @@ function html() {
         + '<div style="position:absolute;width:560px;height:560px;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(99,102,241,0.20) 0%,transparent 65%);pointer-events:none"></div>'
         + '<div style="position:relative;max-width:640px;margin:0 auto;text-align:center">'
         + '<h2 style="font-weight:800;font-size:clamp(26px,3.2vw,42px);letter-spacing:-0.025em;line-height:1.08;color:#f0edf8">Узнайте свой родительский архетип</h2>'
-        + '<p style="margin-top:16px;font-size:16px;color:rgba(240,237,248,0.55)">Шесть ситуаций · 10 минут · без регистрации</p>'
+        + '<p style="margin-top:16px;font-size:16px;color:rgba(240,237,248,0.55)">Шесть ситуаций · 10–15 минут · без регистрации</p>'
         + '<button onclick="start()" class="kjr-cta-link" style="display:inline-block;margin-top:32px;background:#6366f1;color:#fff;font-weight:700;font-size:16px;padding:16px 40px;border-radius:12px;box-shadow:0 0 32px rgba(99,102,241,0.35);transition:transform 0.25s ease,box-shadow 0.25s ease;border:none;cursor:pointer;font-family:inherit">Пройти тест бесплатно →</button>'
         + '<div style="margin-top:28px;display:flex;flex-wrap:wrap;justify-content:center;gap:10px">'
         + '<span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);color:rgba(240,237,248,0.75);border-radius:99px;padding:9px 16px;font-size:13px;font-weight:500">🔒 без регистрации</span>'
-        + '<span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);color:rgba(240,237,248,0.75);border-radius:99px;padding:9px 16px;font-size:13px;font-weight:500">⏱ 10 минут</span>'
+        + '<span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);color:rgba(240,237,248,0.75);border-radius:99px;padding:9px 16px;font-size:13px;font-weight:500">⏱ 10–15 минут</span>'
         + '<span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);color:rgba(240,237,248,0.75);border-radius:99px;padding:9px 16px;font-size:13px;font-weight:500">💾 данные только у вас</span>'
         + '</div></div></section>'
 
@@ -1618,8 +1618,8 @@ function html() {
           name: 'Галина Яновская',
           imgSrc: '/authors/galina-yanovskaya-circle.png',
           imgAlt: 'Галина Яновская',
-          bio: 'Создатель и продюсер проекта «Какой я родитель». Собрала команду, методику и формат теста так, чтобы он говорил с современными работающими родителями на их языке — честно, без морализаторства и чувства вины.',
-          facts: ['Автор идеи и формата', 'Продюсирование проекта', 'ООО «Интеллект Университет»'],
+          bio: 'Вундеркинд: школу закончила в 12 лет, психологическое образование получила в 18. Пятнадцать лет строила корпоративные университеты в международных компаниях — тренер изменений, методолог, тренер по дизайн-мышлению. Сооснователь EduTech-компании «Интеллект Университет»: через её детские программы и международные соревнования прошли больше 30 000 детей. Собрала команду, методику и формат теста так, чтобы он говорил с современными родителями честно — без морализаторства и чувства вины.',
+          facts: ['Психолог · вундеркинд', 'Сооснователь «Интеллект Университет»', 'Тренер изменений', 'Маскат, Оман'],
           tgLabel: 'Telegram @thinking_kids',
           tgLink: 'https://t.me/thinking_kids',
         },
@@ -1628,8 +1628,8 @@ function html() {
           name: 'Людмила Экхардт',
           imgSrc: '/authors/ludmila-ekhardt-circle.png',
           imgAlt: 'Людмила Экхардт',
-          bio: 'Отвечает за научно-методическую основу теста. Перевела академические концепции — теорию привязанности и авторитетного родительства — в живые ситуации и семь рабочих шкал, по которым строится профиль.',
-          facts: ['Методология и шкалы', 'Психология развития', 'Научная редактура'],
+          bio: 'Отвечает за научно-методическую основу теста: перевела академические концепции — теорию привязанности, авторитетное родительство, работы Готтмана и Выготского — в живые ситуации и семь рабочих шкал. Психолог развития и многодетная мать троих детей с разным кросс-культурным опытом. Поэтому методика выросла не только из теории, но и из реальной семейной практики — в разных культурах и языках.',
+          facts: ['Методология и шкалы', 'Психология развития', 'Многодетная мать троих', 'Буэнос-Айрес, Аргентина'],
           tgLabel: 'Telegram',
           tgLink: '#',
         },
@@ -1668,7 +1668,7 @@ function html() {
         // CTA
         + '<section class="kjr-rc" style="opacity:0;background:linear-gradient(135deg,#1a1830 0%,#0e1225 50%,#111827 100%);border-radius:28px;padding:clamp(28px,4vw,48px);text-align:center;margin-top:20px">'
         + '<h2 style="font-weight:800;font-size:clamp(22px,2.8vw,34px);letter-spacing:-0.02em;line-height:1.1;color:#f0edf8">Узнайте свой родительский архетип</h2>'
-        + '<p style="margin-top:14px;font-size:16px;color:rgba(240,237,248,0.55)">Шесть ситуаций · 10 минут · без регистрации</p>'
+        + '<p style="margin-top:14px;font-size:16px;color:rgba(240,237,248,0.55)">Шесть ситуаций · 10–15 минут · без регистрации</p>'
         + '<button onclick="start()" style="display:inline-block;margin-top:26px;background:#6366f1;color:#fff;font-weight:700;font-size:15px;padding:14px 32px;border-radius:12px;box-shadow:0 0 32px rgba(99,102,241,0.35);border:none;cursor:pointer;font-family:inherit">Пройти тест бесплатно →</button>'
         + '</section>'
 
