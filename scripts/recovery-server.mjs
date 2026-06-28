@@ -1891,6 +1891,13 @@ function html() {
     if (window.location.hash) history.replaceState(null, "", window.location.pathname);
     render();
 
+    // В Telegram мини-аппе интро уже дал бот — сразу запускаем тест, минуя лендинг
+    if (IS_MINIAPP && !state.started) {
+      var _hasResult = false;
+      try { _hasResult = !!localStorage.getItem(RESULT_KEY); } catch (e) {}
+      if (!_hasResult) start();
+    }
+
     // ── Cookie banner ───────────────────────────────────────
     (function() {
       const COOKIE_KEY = "rp-cookies-accepted";
