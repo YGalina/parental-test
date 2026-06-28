@@ -1630,8 +1630,8 @@ function html() {
           imgAlt: 'Людмила Экхардт',
           bio: 'Отвечает за научно-методическую основу теста: перевела академические концепции — теорию привязанности, авторитетное родительство, работы Готтмана и Выготского — в живые ситуации и семь рабочих шкал. Психолог развития и многодетная мать троих детей с разным кросс-культурным опытом. Поэтому методика выросла не только из теории, но и из реальной семейной практики — в разных культурах и языках.',
           facts: ['Методология и шкалы', 'Психология развития', 'Многодетная мать троих', 'Буэнос-Айрес, Аргентина'],
-          tgLabel: 'Telegram',
-          tgLink: '#',
+          tgLabel: '',
+          tgLink: '',
         },
       ];
       var authorCards = authors.map(function(a) {
@@ -1646,7 +1646,7 @@ function html() {
           + '<div style="margin-top:18px;display:flex;flex-wrap:wrap;gap:8px">'
           + a.facts.map(function(f){ return '<span style="background:rgba(99,102,241,0.10);border:1px solid rgba(99,102,241,0.18);color:#4f46c9;font-size:12px;font-weight:600;border-radius:99px;padding:7px 14px">' + escapeHtml(f) + '</span>'; }).join('')
           + '</div>'
-          + '<a href="' + escapeHtml(a.tgLink) + '" target="_blank" rel="noreferrer" style="margin-top:18px;display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#6366f1">' + escapeHtml(a.tgLabel) + ' →</a>'
+          + (a.tgLink ? '<a href="' + escapeHtml(a.tgLink) + '" target="_blank" rel="noreferrer" style="margin-top:18px;display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#6366f1">' + escapeHtml(a.tgLabel) + ' →</a>' : '')
           + '</div>'
           + '</section>';
       }).join('');
